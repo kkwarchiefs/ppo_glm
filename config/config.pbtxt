@@ -1,0 +1,28 @@
+backend: "pytorch"
+max_batch_size: 25
+default_model_filename: "model.pt"
+
+input [
+{
+  name: "input_ids__0"
+  data_type: TYPE_INT32
+  dims: [ -1 ]
+},
+{
+  name: "attention_mask__1"
+  data_type: TYPE_INT32
+  dims: [ -1 ]
+},
+{
+  name: "token_type_ids__2"
+  data_type: TYPE_INT32
+  dims: [ -1 ]
+}
+]
+output [
+{
+  name: "output__0"
+  data_type: TYPE_FP32
+  dims: [ -1 ]
+}
+]
