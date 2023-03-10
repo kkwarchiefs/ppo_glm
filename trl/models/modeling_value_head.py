@@ -343,7 +343,7 @@ class AutoModelForSeq2SeqLMWithValueHead(PreTrainedModelWrapper):
             )
             results = results.as_numpy('output')
             lm_logits = torch.tensor(results, dtype=torch.float32).to(device)
-            lm_logits = lm_logits[:,input_ids.size()[1]-1:-1]
+            lm_logits = lm_logits[:,input_ids.size()[1]-1:-1,:]
             cur_input_ids = temp_inputs["input_ids"][:,input_ids.size()[1]:].cpu().to(input_ids.device)
             return (lm_logits, None, torch.tensor([1.,1.], dtype=torch.float32).to(device), cur_input_ids)
 

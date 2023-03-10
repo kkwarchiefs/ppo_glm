@@ -657,10 +657,11 @@ class PPOTrainer(BaseTrainer):
                 attention_mask = input_kwargs["attention_mask"]
             '''
             #logprobs = logprobs_from_logits(logits[:, :-1, :], input_ids[:, 1:])
-            if is_ref:
-                logprobs = logits
-            else:
-                logprobs = logprobs_from_logits(logits, cur_input_ids)
+            # if is_ref:
+            #     logprobs = logits
+            # else:
+            #     logprobs = logprobs_from_logits(logits, cur_input_ids)
+            logprobs = logprobs_from_logits(logits, cur_input_ids)
             #masks = torch.zeros_like(attention_mask)
             #masks[:, :-1] = attention_mask[:, 1:]
             #masks = attention_mask
