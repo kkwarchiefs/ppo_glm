@@ -32,7 +32,6 @@ torch.onnx.export(
 	input_names=['input_ids', 'position_ids', 'attention_mask'],  # 输入节点名，每一个名称对应一个输入名
     output_names=['output'],  # 输出节点名，每一个名称对应一个输出名
 	opset_version=11,
-	use_external_data_format=True,
 	dynamic_axes={'input_ids': {0: 'B', 1: 'C'}, 'position_ids': {0: 'B', 1: 'C', 2: 'D'}, 'attention_mask': {0: 'B', 1: 'C', 2: 'D', 3: 'E'}}  # 声明动态维度，默认输入维度固定，可以声明为可变维度（用字符串占位符表示）
 )
 
