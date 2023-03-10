@@ -342,7 +342,7 @@ class AutoModelForSeq2SeqLMWithValueHead(PreTrainedModelWrapper):
                 timeout=300*1000
             )
             results = results.as_numpy('output')
-            print("results", results, results.shape)
+            # print("results", results, results.shape)
             lm_logits = torch.tensor(results, dtype=torch.float32).to(device)
             lm_logits = lm_logits[:,input_ids.size()[1]-1:-1,:]
             cur_input_ids = temp_inputs["input_ids"][:,input_ids.size()[1]:].cpu().to(input_ids.device)

@@ -115,12 +115,12 @@ def set_seed(seed: int):
 config = PPOConfig(
     model_name="/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/small_glm",
     learning_rate=1e-5,
-    batch_size=2,
+    batch_size=32,
     ppo_epochs=3,
     # log_with="wandb",
     init_kl_coef=0.1,
     remove_unused_columns=False,
-    mini_batch_size=2
+    mini_batch_size=32
 )
 #print(dir(config))
 print(config.batch_size)
@@ -289,15 +289,15 @@ for cur_big_epoch in range(10):
             print("ppo trainer time : " + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         ppo_trainer.log_stats(stats, batch, rewards)
 
-        if epoch%20 == 0 and str(ppo_trainer.accelerator.device) == "cuda:0":
-            reward_path = "/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/RLHF_MODEL_small_glm_fb16"
-            root_path = os.path.join(reward_path, str(cur_big_epoch) + "_" + str(epoch))
-            if os.path.exists(root_path):
-                pass
-            else:
-                os.mkdir(root_path)
-            model.save_pretrained(root_path)
-            tokenizer.save_pretrained(root_path)
+        # if epoch%20 == 0 and str(ppo_trainer.accelerator.device) == "cuda:0":
+        #     reward_path = "/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/RLHF_MODEL_small_glm_fb16"
+        #     root_path = os.path.join(reward_path, str(cur_big_epoch) + "_" + str(epoch))
+        #     if os.path.exists(root_path):
+        #         pass
+        #     else:
+        #         os.mkdir(root_path)
+        #     model.save_pretrained(root_path)
+        #     tokenizer.save_pretrained(root_path)
     print("=="*20)
     print(cur_big_epoch)
     print("successfully!!!")
