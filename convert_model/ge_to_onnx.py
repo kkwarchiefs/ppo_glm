@@ -12,11 +12,12 @@ device = torch.device('cuda:7')
 
 
 model_path = "/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/cur_model/30630"
-model_path = "./model/GLM-10B-chinese-customization_02-28-11-26/30630/"
+model_path = "/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/small_glm"
+query_text = '什么人不能喝三七粉'
+response_text = '服用三七粉期间,孕妇和儿童不宜使用。 三七粉是处方药,不是药品。 过量服用会引起中毒。'
 tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
-inputs = tokenizer("reward model's hash"+"[gMASK]", return_tensors="pt")
-ge_inputs = tokenizer.build_inputs_for_generation(inputs, max_gen_length=512)
-temp_inputs = tokenizer.build_inputs_for_generation_from_tensor(inputs['input_ids'], inputs["input_ids"])
+temp_inputs = tokenizer(query_text, return_tensors="pt", padding=True)
+temp_inputs = tokenizer.build_inputs_for_generation_test(temp_inputs, targets=response_text, max_gen_length=512, padding=False)
 print(temp_inputs)
 
 model = AutoModelForSeq2SeqLM.from_pretrained(model_path, torchscript=True, trust_remote_code=True, return_dict=False)
