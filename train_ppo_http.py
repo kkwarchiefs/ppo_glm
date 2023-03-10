@@ -245,7 +245,15 @@ for cur_big_epoch in range(10):
         padding_mask = padding_mask.int()
         response_tensor = [torch.tensor(i[:sum(j)+1]) for i,j in zip(response.tolist(), padding_mask.tolist())]
         batch["query"] = [tokenizer.decode(r) for r in query_tensor["input_ids"].tolist()]
-        batch["response"] = [tokenizer.decode(logits) for logits in response_tensor]
+        response_tmp = []
+        for logits in response_tensor:
+            try:
+                response_tmp.append(tokenizer.decode(logits))
+            except:
+                print(logits)
+                exit(-1)
+        batch["response"] = response_tmp
+
         ''' 
         if str(ppo_trainer.accelerator.device) == "cuda:0":
             print(batch["query"])
