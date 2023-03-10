@@ -19,7 +19,7 @@ device = torch.device('cuda:7')
 RM_model_path = "/search/ai/kaitongyang/RLHF_DEBUG/RM/summarization_reward_model/checkpoint-58/"
 RM_model_path = '/search/ai/pretrain_models/roberta-base-finetuned-jd-binary-chinese'
 RM_tokenizer = AutoTokenizer.from_pretrained(RM_model_path)
-RM_model = AutoModelForSequenceClassification.from_pretrained(RM_model_path, num_labels=1, torchscript=True)
+RM_model = AutoModelForSequenceClassification.from_pretrained(RM_model_path, torchscript=True)
 RM_model.to(device)
 query_text = '什么人不能喝三七粉'
 response_text = '服用三七粉期间,孕妇和儿童不宜使用。 三七粉是处方药,不是药品。 过量服用会引起中毒。'
