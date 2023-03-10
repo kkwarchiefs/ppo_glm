@@ -204,7 +204,7 @@ RM_model = AutoModelForSequenceClassification.from_pretrained(RM_model_path, num
 RM_model.to(no_update_device)
 '''
 #
-senti_tokenizer = AutoTokenizer.from_pretrained('uer/roberta-base-finetuned-jd-binary-chinese')
+senti_tokenizer = AutoTokenizer.from_pretrained('/search/ai/pretrain_models/roberta-base-finetuned-jd-binary-chinese')
 # senti_model = AutoModelForSequenceClassification.from_pretrained('uer/roberta-base-finetuned-jd-binary-chinese')
 # sentiment_pipe = pipeline('sentiment-analysis', model=senti_model, tokenizer=senti_tokenizer, device=no_update_device)
 triton_client = httpclient.InferenceServerClient(url="10.212.204.89:8000")

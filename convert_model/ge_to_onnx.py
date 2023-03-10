@@ -13,7 +13,7 @@ device = torch.device('cuda:7')
 
 model_path = "/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/cur_model/30630"
 model_path = "/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/small_glm"
-query_text = '什么人不能喝三七粉'+ "[gMASK]"
+query_text = '什么人不能喝三七粉' + "[gMASK]"
 response_text = '服用三七粉期间,孕妇和儿童不宜使用。 三七粉是处方药,不是药品。 过量服用会引起中毒。'
 tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
 temp_inputs = tokenizer(query_text, return_tensors="pt", padding=True)
