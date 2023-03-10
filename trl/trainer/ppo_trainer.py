@@ -655,47 +655,15 @@ class PPOTrainer(BaseTrainer):
                 attention_mask = input_kwargs["attention_mask"]
             '''
             #logprobs = logprobs_from_logits(logits[:, :-1, :], input_ids[:, 1:])
-            logprobs = logprobs_from_logits(logits, cur_input_ids)
+            if is_ref:
+                logprobs = logits
+            else:
+                logprobs = logprobs_from_logits(logits, cur_input_ids)
             #masks = torch.zeros_like(attention_mask)
             #masks[:, :-1] = attention_mask[:, 1:]
             #masks = attention_mask
             #masks = torch.ones_like(logprobs)
             masks = input_kwargs["decoder_attention_mask"]
-            '''
-            for j in range(fbs):
-                start = input_kwargs["input_ids"].size()[1]-1
-                end  = start + len(response_batch[j])-1
-                masks[j, end:] = 0 
-                masks[j, :start] = 0
-            if str(logprobs.device) == "cuda:0":
-                 query_text = [self.tokenizer.decode(i) for i in cur_input_ids.tolist()]
-                 print(query_text)
-                 for i, j in zip(cur_input_ids.tolist(), masks.tolist()):
-                     temp = []
-                     for k,m in zip(i,j):
-                         if m==1:
-                             temp.append(k)
-                     print(self.tokenizer.decode(temp))
-            '''
-                
-            '''
-            for j in range(fbs):
-                if self.is_encoder_decoder:
-                    # Decoder sentence starts always in the index 1 after padding in the Enc-Dec Models
-                    start = 1
-                    end = attention_mask[j, :].sum() - 1
-                else:
-                    start = len(query_batch[j]) - 1
-                    if attention_mask[j, 0] == 0:  # offset left padding
-                        start += attention_mask[j, :].nonzero()[0]
-                    end = start + len(response_batch[j])
-
-                if len(logprobs[j, start:end]) < 2:
-                    raise ValueError("Responses are too short. Make sure they are at least 4 tokens long.")
-
-                masks[j, :start] = 0
-                masks[j, end:] = 0
-            '''
             all_logits.append(logits)
             all_values.append(values)
             all_logprobs.append(logprobs)
