@@ -318,10 +318,10 @@ class AutoModelForSeq2SeqLMWithValueHead(PreTrainedModelWrapper):
         query_text = [self.tokenizer.decode(i[1:sum(j)-2]) for i,j in zip(input_ids.tolist(), attention_mask.tolist())]
         #response_text = [self.tokenizer.decode(i[:sum(j)]) for i,j in zip(kwargs["decoder_input_ids"].tolist(), kwargs["decoder_attention_mask"].tolist())]
         response_text = [i[:sum(j)] for i,j in zip(kwargs["decoder_input_ids"].tolist(), kwargs["decoder_attention_mask"].tolist())]
-        # response_text_new = [self.tokenizer.decode(a) for a in response_text]
+        response_text_new = [self.tokenizer.decode(a) for a in response_text]
         # print(response_text_new)
         temp_inputs = self.tokenizer(query_text, return_tensors="pt", padding=True)
-        temp_inputs = self.tokenizer.build_inputs_for_generation_test(temp_inputs, targets=response_text, max_gen_length=512, padding=False)
+        temp_inputs = self.tokenizer.build_inputs_for_generation(temp_inputs, targets=response_text_new, max_gen_length=512, padding=False)
         device = input_ids.device
         if self.triton_client and kwargs["is_ref"]:
             temp_inputs.to("cpu")
