@@ -17,7 +17,7 @@ query_text = '什么人不能喝三七粉'
 response_text = '服用三七粉期间,孕妇和儿童不宜使用。 三七粉是处方药,不是药品。 过量服用会引起中毒。'
 tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
 temp_inputs = tokenizer(query_text, return_tensors="pt", padding=True)
-temp_inputs = tokenizer.build_inputs_for_generation_test(temp_inputs, targets=response_text, max_gen_length=512, padding=False)
+temp_inputs = tokenizer.build_inputs_for_generation(temp_inputs, targets=response_text, max_gen_length=512, padding=False)
 print(temp_inputs)
 
 model = AutoModelForSeq2SeqLM.from_pretrained(model_path, torchscript=True, trust_remote_code=True, return_dict=False)
