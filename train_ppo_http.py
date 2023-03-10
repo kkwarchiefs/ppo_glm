@@ -179,6 +179,7 @@ tokenizer = AutoTokenizer.from_pretrained(config.model_name, trust_remote_code=T
 model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True)
 # ref_model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True)
 model.set_tokenizer(tokenizer)
+model.eval()
 # ref_model.set_tokenizer(tokenizer)
 print("start build dataset")
 dataset_path="/search/ai/kaitongyang/RLHF_DEBUG/RM/data/success-0223.json"

@@ -448,6 +448,7 @@ class PPOTrainer(BaseTrainer):
             ref_logprobs, _, _, _ = self.batched_forward_pass(self.model, queries, responses, model_inputs, is_ref=True)
             print("all_logprobs", all_logprobs.shape, all_logprobs)
             print("all_logprobs", ref_logprobs.shape, ref_logprobs)
+            exit(-1)
         timing["time/ppo/forward_pass"] = time.time() - t
 
         t = time.time()
