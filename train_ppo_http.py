@@ -177,9 +177,9 @@ set_seed(0)
 # Now let's build the model, the reference model, and the tokenizer.
 tokenizer = AutoTokenizer.from_pretrained(config.model_name, trust_remote_code=True)
 model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True)
-ref_model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True)
+# ref_model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True)
 model.set_tokenizer(tokenizer)
-ref_model.set_tokenizer(tokenizer)
+# ref_model.set_tokenizer(tokenizer)
 print("start build dataset")
 dataset_path="/search/ai/kaitongyang/RLHF_DEBUG/RM/data/success-0223.json"
 #dataset = build_dataset(dataset_path, tokenizer)
@@ -187,7 +187,7 @@ dataset = PPOIdxDataset(tokenizer)
 #print(dataset)
 print("num_dataset:"+str(len(dataset)))
 # We then build the PPOTrainer, passing the model, the reference model, the tokenizer
-ppo_trainer = GLMPPOTrainer(config, model, ref_model, tokenizer, dataset=dataset, data_collator=collator)
+ppo_trainer = GLMPPOTrainer(config, model, None, tokenizer, dataset=dataset, data_collator=collator)
 
 # We then build the sentiment analysis pipeline, passing the model name and the
 # sentiment analysis pipeline arguments. Let's also make sure to set the device

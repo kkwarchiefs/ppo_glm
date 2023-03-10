@@ -183,21 +183,21 @@ class PPOTrainer(BaseTrainer):
         self.model = model
         self.is_encoder_decoder = hasattr(self.model, "is_encoder_decoder")
 
-        if isinstance(ref_model, PreTrainedModelWrapper):
-            self.ref_model = ref_model
-            if num_shared_layers is not None:
-                warnings.warn(
-                    "num_shared_layers is ignored when ref_model is provided. Two different models are used for the "
-                    "model and the reference model and no layers are shared.",
-                    UserWarning,
-                )
-        elif ref_model is None:
-            self.ref_model = create_reference_model(self.model, num_shared_layers=num_shared_layers)
-        else:
-            raise ValueError(
-                f"ref_model must be a PreTrainedModelWrapper or `None`, got {type(ref_model)} - supported "
-                f"architectures are: {SUPPORTED_ARCHITECTURES} "
-            )
+        # if isinstance(ref_model, PreTrainedModelWrapper):
+        #     self.ref_model = ref_model
+        #     if num_shared_layers is not None:
+        #         warnings.warn(
+        #             "num_shared_layers is ignored when ref_model is provided. Two different models are used for the "
+        #             "model and the reference model and no layers are shared.",
+        #             UserWarning,
+        #         )
+        # elif ref_model is None:
+        #     self.ref_model = create_reference_model(self.model, num_shared_layers=num_shared_layers)
+        # else:
+        #     raise ValueError(
+        #         f"ref_model must be a PreTrainedModelWrapper or `None`, got {type(ref_model)} - supported "
+        #         f"architectures are: {SUPPORTED_ARCHITECTURES} "
+        #     )
 
         if not (isinstance(tokenizer, PreTrainedTokenizer) or isinstance(tokenizer, PreTrainedTokenizerFast)):
             raise ValueError(
@@ -261,9 +261,9 @@ class PPOTrainer(BaseTrainer):
         ) = self.accelerator.prepare(
             self.model, self.optimizer, self.data_collator, self.dataloader
         )
-        self.cur_device = "cuda:" + str(int(str(self.accelerator.device).split(":")[-1])+4)
-        self.ref_model = self.ref_model.to(self.cur_device)
-        self.ref_model.eval()
+        # self.cur_device = "cuda:" + str(int(str(self.accelerator.device).split(":")[-1])+4)
+        # self.ref_model = self.ref_model.to(self.cur_device)
+        # self.ref_model.eval()
 
         # In a distributed setup, only logging needs to be performed on the main process
         # check: https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html
@@ -445,7 +445,7 @@ class PPOTrainer(BaseTrainer):
         model_inputs_names = list(model_inputs.keys())
         with torch.no_grad():
             all_logprobs, _, values, masks = self.batched_forward_pass(self.model, queries, responses, model_inputs)
-            ref_logprobs, _, _, _ = self.batched_forward_pass(self.ref_model, queries, responses, model_inputs, is_ref=True)
+            ref_logprobs, _, _, _ = self.batched_forward_pass(self.model, queries, responses, model_inputs, is_ref=True)
 
         timing["time/ppo/forward_pass"] = time.time() - t
 
