@@ -79,7 +79,7 @@ def request(count):
             good_num = good_num + 1
         count = count + 1
         print(logits)
-    print(count)
+    print(good_num, count)
         # 模型输入数据（bytes）
 
 
