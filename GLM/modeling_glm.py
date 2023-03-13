@@ -929,6 +929,7 @@ class GLMForSequenceClassification(GLMPreTrainedModel):
         classifier_dropout = (
             config.classifier_dropout if config.classifier_dropout is not None else config.output_dropout_prob
         )
+        classifier_dropout =  config.output_dropout_prob
         self.dropout = torch.nn.Dropout(classifier_dropout)
         self.out_proj = torch.nn.Linear(config.hidden_size, config.num_labels)
 
