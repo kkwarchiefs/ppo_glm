@@ -119,12 +119,12 @@ def set_seed(seed: int):
 config = PPOConfig(
     model_name="/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/glm_0.5",
     learning_rate=1e-5,
-    batch_size=8,
+    batch_size=2,
     ppo_epochs=3,
     log_with="wandb",
     init_kl_coef=0.1,
     remove_unused_columns=False,
-    mini_batch_size=8
+    mini_batch_size=2
 )
 #print(dir(config))
 print(config.batch_size)
@@ -215,7 +215,7 @@ RM_model.to(no_update_device)
 senti_tokenizer = AutoTokenizer.from_pretrained('/search/ai/kaitongyang/RLHF_DEBUG/RM/reward_model_glm_10b_bak/final', trust_remote_code=True)
 # senti_model = AutoModelForSequenceClassification.from_pretrained('uer/roberta-base-finetuned-jd-binary-chinese')
 # sentiment_pipe = pipeline('sentiment-analysis', model=senti_model, tokenizer=senti_tokenizer, device=no_update_device)
-triton_client = httpclient.InferenceServerClient(url='10.212.207.33:8000')
+triton_client = httpclient.InferenceServerClient(url='10.212.207.33:8000', connection_timeout=300, network_timeout=300)
 
 # We then define the arguments to pass to the `generate` function. These arguments
 # are passed to the `generate` function of the PPOTrainer, which is a wrapper around
