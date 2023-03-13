@@ -26,7 +26,7 @@ RM_model = AutoModelForSequenceClassification.from_pretrained(RM_model_path, tor
 RM_model = RM_model.half().to(device)
 query_text = '什么人不能喝三七粉' + "[UNUSED1]"
 response_text = '服用三七粉期间,孕妇和儿童不宜使用。 三七粉是处方药,不是药品。 过量服用会引起中毒。'
-input = RM_tokenizer(query_text + response_text, max_length=512, padding=True, return_tensors="pt").to(device)
+input = RM_tokenizer([query_text + response_text, query_text + response_text[:4]], max_length=512, padding=True, return_tensors="pt").to(device)
 print(input)
 # print(RM_model(input['input_ids'], input['attention_mask']))
 RM_model = RM_model.eval()  # 转换为eval模式
