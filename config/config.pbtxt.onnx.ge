@@ -23,7 +23,7 @@ output [
 {
   name: "output"
   data_type: TYPE_FP16
-  dims: [ -1 ]
+  dims: [ -1, 50048 ]
 }
 ]
 
