@@ -29,7 +29,7 @@ from trl import PPOTrainer, PPOConfig, AutoModelForCausalLMWithValueHead, AutoMo
 from transformers import  AutoModelForSeq2SeqLM, AutoModelForSequenceClassification
 from trl.core import LengthSampler
 import tritonclient.http as httpclient
-
+import time
 ########################################################################
 # This is a fully working simple example to use trl with accelerate.
 #
@@ -178,6 +178,10 @@ def collator(data):
 
 # set seed before initializing value head for deterministic eval
 set_seed(0)
+print("os LOCAL_RANK", os.environ["LOCAL_RANK"])
+if int(os.environ["LOCAL_RANK"]) % 2 == 1:
+    print("sleep some time" )
+    time.sleep(120)
 
 # Now let's build the model, the reference model, and the tokenizer.
 tokenizer = AutoTokenizer.from_pretrained(config.model_name, trust_remote_code=True)
