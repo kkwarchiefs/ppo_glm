@@ -18,11 +18,11 @@ query_text = '什么人不能喝三七粉' + "[gMASK]"
 response_text = '服用三七粉期间,孕妇和儿童不宜使用。 三七粉是处方药,不是药品。 过量服用会引起中毒。'
 tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
 temp_inputs = tokenizer(query_text, return_tensors="pt", padding=True)
-temp_inputs = tokenizer.build_inputs_for_generation(temp_inputs, targets=response_text, max_gen_length=512, padding=False)
+temp_inputs = tokenizer.build_inputs_for_generation(temp_inputs, targets=response_text, max_gen_length=512, padding=False).to(device)
 print(temp_inputs)
 
 model = AutoModelForSeq2SeqLM.from_pretrained(model_path, torchscript=True, trust_remote_code=True, return_dict=False)
-model = model.half().eval()  # 转换为eval模式
+model = model.half().to(device).eval()  # 转换为eval模式
 # print(model(**temp_inputs))
 inputs = (temp_inputs['input_ids'], temp_inputs['position_ids'], temp_inputs['attention_mask'])  # 模型测试输入数据
 os.makedirs(f"model_store/{model_name}/1", exist_ok=True)
