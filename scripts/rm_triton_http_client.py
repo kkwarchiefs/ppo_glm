@@ -65,8 +65,21 @@ def request(count):
             request_id='1'
         )
         results = results.as_numpy('output')
-        rewards = [torch.tensor(results[i][0]) for i in range(len(results))]
-        print(rewards)
+        logits = [torch.tensor(results[i][0]) for i in range(len(results))]
+        if logits[0] > logits[1]:
+            bad_num = bad_num + 1
+            if bad_num < 10:
+                print("*" * 10)
+                print(prompt)
+                for response, score in zip(prompt_list, logits):
+                    print("=" * 5)
+                    print(score)
+                    print(response)
+        else:
+            good_num = good_num + 1
+        count = count + 1
+        print(logits)
+    print(count)
         # 模型输入数据（bytes）
 
 
