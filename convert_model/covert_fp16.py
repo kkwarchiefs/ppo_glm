@@ -9,7 +9,7 @@ import sys
 import os
 model_name = sys.argv[1]
 
-output_onnx_name = f"model_store/{model_name}/1"
+output_onnx_name = f"model_store/{model_name}/1/model.onnx"
 os.makedirs(f"model_store/{model_name}_fp16/1", exist_ok=True)
 
 onnx_model = load_model(output_onnx_name)
