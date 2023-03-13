@@ -85,7 +85,8 @@ def GetRmBatchNumpy(prompt_list, response_list, RM_tokenizer):
     for prompt, response in zip(prompt_list, response_list):
         prompt = prompt.replace("<|startofpiece|>", "").replace("[回答]", "").replace("[CLS]", "").replace("\n", "").replace("<n>", "")
         response = response.replace("<|startofpiece|>", "").replace("<|endofpiece|>", "").replace("<|endoftext|>", "").replace("<n>", "##402").replace(" ","")
-        prompt_list.append((prompt + "[UNUSED1]" + response)[:500])
+        new_prompt = prompt + "[UNUSED1]" + response
+        prompt_list.append(new_prompt[:500])
         # RM_input = RM_tokenizer((prompt + "[UNUSED1]" + response)[:300], max_length=512, padding=True)
         # input_ids_list.append(RM_input["input_ids"])
         # attention_mask_list.append(RM_input["attention_mask"])
