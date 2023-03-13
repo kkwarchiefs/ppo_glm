@@ -73,7 +73,7 @@ class PreTrainedModelWrapper(nn.Module):
         else:
             trl_model_args = {}
             pretrained_kwargs = {}
-
+        print(trl_model_args, pretrained_kwargs)
         # First, load the pre-trained model using the parent-class
         # either `AutoModelForCausalLM` or `AutoModelForSeq2SeqLM`
         if isinstance(pretrained_model_name_or_path, str):
