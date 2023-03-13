@@ -213,7 +213,7 @@ RM_model = AutoModelForSequenceClassification.from_pretrained(RM_model_path, num
 RM_model.to(no_update_device)
 '''
 #
-senti_tokenizer = AutoTokenizer.from_pretrained('/search/ai/kaitongyang/RLHF_DEBUG/RM/reward_model_glm_10b_bak/final', trust_remote_code=True)
+senti_tokenizer = AutoTokenizer.from_pretrained('/search/ai/kaitongyang/RLHF_DEBUG/RM/reward_model_glm_10b_bak/final', trust_remote_code=True, remote_ip='10.212.207.33:8000')
 # senti_model = AutoModelForSequenceClassification.from_pretrained('uer/roberta-base-finetuned-jd-binary-chinese')
 # sentiment_pipe = pipeline('sentiment-analysis', model=senti_model, tokenizer=senti_tokenizer, device=no_update_device)
 triton_client = httpclient.InferenceServerClient(url="10.212.207.33:8000")
