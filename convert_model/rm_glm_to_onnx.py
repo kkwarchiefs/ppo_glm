@@ -18,6 +18,8 @@ device = torch.device('cuda:7')
 
 RM_model_path = "/search/ai/kaitongyang/RLHF_DEBUG/RM/summarization_reward_model/checkpoint-58/"
 RM_model_path = '/search/ai/pretrain_models/roberta-base-finetuned-jd-binary-chinese'
+RM_model_path = "/search/ai/kaitongyang/RLHF_DEBUG/RM/reward_model_glm_10b/final"
+
 RM_tokenizer = AutoTokenizer.from_pretrained(RM_model_path)
 RM_model = AutoModelForSequenceClassification.from_pretrained(RM_model_path, torchscript=True)
 RM_model.to(device)

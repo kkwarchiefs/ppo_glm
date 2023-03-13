@@ -22,7 +22,7 @@ temp_inputs = tokenizer.build_inputs_for_generation(temp_inputs, targets=respons
 print(temp_inputs)
 
 model = AutoModelForSeq2SeqLM.from_pretrained(model_path, torchscript=True, trust_remote_code=True, return_dict=False)
-model = model.eval()  # 转换为eval模式
+model = model.half().eval()  # 转换为eval模式
 # print(model(**temp_inputs))
 inputs = (temp_inputs['input_ids'], temp_inputs['position_ids'], temp_inputs['attention_mask'])  # 模型测试输入数据
 os.makedirs(f"model_store/{model_name}/1", exist_ok=True)
