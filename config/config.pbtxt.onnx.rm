@@ -1,5 +1,5 @@
 backend: "onnxruntime"
-max_batch_size: 25
+max_batch_size: 128
 default_model_filename: "model.onnx"
 
 input [

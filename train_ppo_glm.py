@@ -287,8 +287,7 @@ for cur_big_epoch in range(10):
             results = results.as_numpy('output')
             rewards = [torch.tensor(results[i][0]) for i in range(len(results))]
         except:
-            score_ = [0.]*config.batch_size
-            rewards = [torch.tensor(score_)]
+            rewards = [torch.tensor(0.)]*config.batch_size
         #print(rewards)
         if str(ppo_trainer.accelerator.device) == "cuda:0":
             print(str(ppo_trainer.accelerator.device))
