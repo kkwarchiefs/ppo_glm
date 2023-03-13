@@ -254,7 +254,9 @@ class AutoModelForSeq2SeqLMWithValueHead(PreTrainedModelWrapper):
         self.v_head = ValueHead(self.pretrained_model.config, **v_head_kwargs)
 
         self._init_weights(**v_head_kwargs)
-        self.triton_client = httpclient.InferenceServerClient(url="10.212.204.89:8000", connection_timeout= 300, network_timeout=300)
+        global http_url
+        print("http_url", http_url)
+        self.triton_client = httpclient.InferenceServerClient(url=http_url, connection_timeout=300, network_timeout=300)
     def set_tokenizer(self, tokenizer):
         self.tokenizer = tokenizer
 
