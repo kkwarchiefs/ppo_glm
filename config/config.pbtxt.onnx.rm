@@ -22,7 +22,7 @@ input [
 output [
 {
   name: "output"
-  data_type: TYPE_FP32
+  data_type: TYPE_FP16
   dims: [ 1 ]
 }
 ]
@@ -31,5 +31,6 @@ instance_group [
 {
     count: 1
     kind: KIND_GPU
+    gpus: [ 0, 1 ]
 }
 ]
