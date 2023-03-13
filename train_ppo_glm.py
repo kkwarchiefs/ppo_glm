@@ -118,13 +118,13 @@ def set_seed(seed: int):
 
 config = PPOConfig(
     model_name="/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/glm_0.5",
-    learning_rate=1e-5,
-    batch_size=2,
+    learning_rate=1e-6,
+    batch_size=8,
     ppo_epochs=3,
     log_with="wandb",
     init_kl_coef=0.1,
     remove_unused_columns=False,
-    mini_batch_size=2
+    mini_batch_size=8
 )
 #print(dir(config))
 print(config.batch_size)
@@ -156,8 +156,8 @@ def build_dataset(data_path, tokenizer):
 class PPOIdxDataset(Dataset):
     def __init__(self, tokenizer):
         self.tokenizer = tokenizer
-        self.f = open("/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/data_process/pinglun_short/prompt.txt")
-        with open("/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/data_process/pinglun_short/dataset_tmp.id", 'rb') as fp:
+        self.f = open("/search/ai/kaitongyang/ppo_glm/data/prompt.txt")
+        with open("/search/ai/kaitongyang/ppo_glm/data/dataset_tmp.id", 'rb') as fp:
             self.offsets = pickle.load(fp)
     def __len__(self):
         return len(self.offsets)
