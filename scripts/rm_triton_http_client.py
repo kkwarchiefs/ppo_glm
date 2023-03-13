@@ -40,6 +40,9 @@ def request(count):
     triton_client = httpclient.InferenceServerClient(url=address)
     data_path = "/search/ai/kaitongyang/RLHF_DEBUG/RM/data/chatgpt_we/eval/eval_data.txt"
     datas = open(data_path).read().splitlines()
+    count = 0
+    good_num = 0
+    bad_num = 0
     for data in datas:
         example = json.loads(data)
         prompt = example["prompt"]
