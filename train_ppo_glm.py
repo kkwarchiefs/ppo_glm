@@ -281,18 +281,18 @@ for cur_big_epoch in range(10):
         inputs[0].set_data_from_numpy(RM_batch[0])
         inputs[1].set_data_from_numpy(RM_batch[1])
         output = httpclient.InferRequestedOutput('output')
-        try:
-            results = triton_client.infer(
-                "RM_model_onnx",
-                inputs,
-                model_version='1',
-                outputs=[output],
-                request_id='1'
-            )
-            results = results.as_numpy('output')
-            rewards = [torch.tensor(results[i][0]) for i in range(len(results))]
-        except:
-            rewards = [torch.tensor(0.)]*config.batch_size
+        # try:
+        results = triton_client.infer(
+            "RM_model_onnx",
+            inputs,
+            model_version='1',
+            outputs=[output],
+            request_id='1'
+        )
+        results = results.as_numpy('output')
+        rewards = [torch.tensor(results[i][0]) for i in range(len(results))]
+        # except:
+        #     rewards = [torch.tensor(0.)]*config.batch_size
         #print(rewards)
         if str(ppo_trainer.accelerator.device) == "cuda:0":
             print(str(ppo_trainer.accelerator.device))
