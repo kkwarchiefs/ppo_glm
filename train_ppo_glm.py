@@ -184,8 +184,7 @@ if int(os.environ["LOCAL_RANK"]) % 2 == 1:
 
 # Now let's build the model, the reference model, and the tokenizer.
 tokenizer = AutoTokenizer.from_pretrained(config.model_name, trust_remote_code=True)
-
-model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True)
+model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True, remote_ip='10.212.207.33:8000')
 # ref_model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True)
 model.set_tokenizer(tokenizer)
 # ref_model.set_tokenizer(tokenizer)
