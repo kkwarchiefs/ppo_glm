@@ -48,8 +48,9 @@ def request(count):
         prompt_list = [prompt + "[UNUSED1]" + bad.replace("\n", "<n>").replace("<|endofpiece|>", ""),
                        prompt + "[UNUSED1]" + best.replace("\n", "<n>")]
         prompt_list = [i[:500] for i in prompt_list]
-        inputs = tokenizer(prompt_list, max_length=512, return_tensors="pt", padding=True)
-        RM_batch = [torch.tensor(inputs["input_ids"]).numpy(), torch.tensor(inputs["attention_mask"]).numpy()]
+        inputs = []
+        rm_inputs = tokenizer(prompt_list, max_length=512, return_tensors="pt", padding=True)
+        RM_batch = [torch.tensor(rm_inputs["input_ids"]).numpy(), torch.tensor(rm_inputs["attention_mask"]).numpy()]
         inputs.append(httpclient.InferInput('input_ids', list(RM_batch[0].shape), 'INT64'))
         inputs.append(httpclient.InferInput('attention_mask', list(RM_batch[1].shape), 'INT64'))
         inputs[0].set_data_from_numpy(RM_batch[0])
