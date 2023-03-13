@@ -13,7 +13,7 @@ parser.add_argument("--device", type=int, default=0)
 args = parser.parse_args()
 
 model_name = "RM_model_onnx"
-device = torch.device('cuda:7')
+device = torch.device('cuda:3')
 
 
 RM_model_path = "/search/ai/kaitongyang/RLHF_DEBUG/RM/summarization_reward_model/checkpoint-58/"
