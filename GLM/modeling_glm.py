@@ -945,8 +945,8 @@ class GLMForSequenceClassification(GLMPreTrainedModel):
     )
     def forward(self,
                 input_ids=None,
-                position_ids=None,
                 attention_mask=None,
+                position_ids=None,
                 labels=None):
 
         num_choices = None
