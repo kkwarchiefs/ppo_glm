@@ -77,6 +77,7 @@ class PreTrainedModelWrapper(nn.Module):
         # First, load the pre-trained model using the parent-class
         # either `AutoModelForCausalLM` or `AutoModelForSeq2SeqLM`
         if isinstance(pretrained_model_name_or_path, str):
+            pretrained_kwargs.pop("remote_ip", None)
             pretrained_model = cls.transformers_parent_class.from_pretrained(
                 pretrained_model_name_or_path, *model_args, **pretrained_kwargs
             )
