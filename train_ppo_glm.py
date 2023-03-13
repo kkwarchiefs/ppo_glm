@@ -92,7 +92,8 @@ def GetRmBatchNumpy(prompt_list, response_list, RM_tokenizer):
         # attention_mask_list.append(RM_input["attention_mask"])
         # token_type_ids_list.append(RM_input["token_type_ids"])
     RM_input = RM_tokenizer(prompt_res, max_length=512, padding=True)
-    result = [RM_input["input_ids"].numpy(),  RM_input["attention_mask"].numpy()]
+    print('RM_input:', RM_input)
+    result = [torch.tensor(RM_input["input_ids"]).numpy(),  torch.tensor(RM_input["attention_mask"]).numpy()]
     # result = InputDict([("input_ids", torch.tensor(input_ids_list).to(cur_device)),("attention_mask", torch.tensor(attention_mask_list).to(cur_device)),("token_type_ids", torch.tensor(token_type_ids_list).to(cur_device))])
     return result
 
