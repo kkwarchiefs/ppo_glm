@@ -84,7 +84,7 @@ def GetRmBatchNumpy(prompt_list, response_list, RM_tokenizer):
     for prompt, response in zip(prompt_list, response_list):
         prompt = prompt.replace("<|startofpiece|>", "").replace("[回答]", "").replace("[CLS]", "").replace("\n", "").replace("<n>", "")
         response = response.replace("<|startofpiece|>", "").replace("<|endofpiece|>", "").replace("<|endoftext|>", "").replace("<n>", "##402").replace(" ","")
-        RM_input = RM_tokenizer((prompt + "[UNUSED1]" + response)[:500], truncation=True, max_length=512, padding="max_length")
+        RM_input = RM_tokenizer((prompt + "[UNUSED1]" + response)[:300], truncation=True, max_length=512, padding="max_length")
         input_ids_list.append(RM_input["input_ids"])
         attention_mask_list.append(RM_input["attention_mask"])
         # token_type_ids_list.append(RM_input["token_type_ids"])
@@ -275,15 +275,18 @@ for cur_big_epoch in range(10):
         inputs[0].set_data_from_numpy(RM_batch[0])
         inputs[1].set_data_from_numpy(RM_batch[1])
         output = httpclient.InferRequestedOutput('output')
-        results = triton_client.infer(
-            "RM_model_onnx",
-            inputs,
-            model_version='1',
-            outputs=[output],
-            request_id='1'
-        )
-        results = results.as_numpy('output')
-        rewards = [torch.tensor(results[i][0]) for i in range(len(results))]
+        try:
+            results = triton_client.infer(
+                "RM_model_onnx",
+                inputs,
+                model_version='1',
+                outputs=[output],
+                request_id='1'
+            )
+            results = results.as_numpy('output')
+            rewards = [torch.tensor(results[i][0]) for i in range(len(results))]
+        except:
+            rewards = [torch.tensor([0.]*RM_batch[0].shape[0])]
         #print(rewards)
         if str(ppo_trainer.accelerator.device) == "cuda:0":
             print(str(ppo_trainer.accelerator.device))
