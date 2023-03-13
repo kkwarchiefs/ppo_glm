@@ -241,6 +241,7 @@ class AutoModelForSeq2SeqLMWithValueHead(PreTrainedModelWrapper):
         "summary_dropout_prob",
         "v_head_initializer_range",
         "v_head_init_strategy",
+        "remote_ip",
     )
 
     def __init__(self, pretrained_model, **kwargs):
