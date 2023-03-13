@@ -35,7 +35,7 @@ torch.onnx.export(
 	RM_model,
 	inputs,
 	f"model_store/{model_name}/1/model.onnx",  # 输出模型文件名
-	input_names=['input_ids', 'attention_mask', 'token_type_ids'],  # 输入节点名，每一个名称对应一个输入名
+	input_names=['input_ids', 'attention_mask'],  # 输入节点名，每一个名称对应一个输入名
     output_names=['output'],  # 输出节点名，每一个名称对应一个输出名
 	opset_version=14,
 	dynamic_axes={'input_ids': {0: 'B', 1: 'C'}, 'attention_mask': {0: 'B', 1: 'C'}}  # 声明动态维度，默认输入维度固定，可以声明为可变维度（用字符串占位符表示）

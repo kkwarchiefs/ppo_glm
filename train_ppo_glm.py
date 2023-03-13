@@ -270,6 +270,7 @@ for cur_big_epoch in range(10):
         rewards = []
         RM_batch = GetRmBatchNumpy(batch["query"], batch["response"], senti_tokenizer)
         inputs = []
+        print("RM shape: ", RM_batch[0].shape, RM_batch[1].shape)
         inputs.append(httpclient.InferInput('input_ids', list(RM_batch[0].shape), 'INT64'))
         inputs.append(httpclient.InferInput('attention_mask', list(RM_batch[1].shape), 'INT64'))
         inputs[0].set_data_from_numpy(RM_batch[0])
@@ -286,7 +287,7 @@ for cur_big_epoch in range(10):
             results = results.as_numpy('output')
             rewards = [torch.tensor(results[i][0]) for i in range(len(results))]
         except:
-            rewards = [torch.tensor([0.]*RM_batch[0].shape[0])]
+            rewards = [torch.tensor([0.]*config.batch_size)]
         #print(rewards)
         if str(ppo_trainer.accelerator.device) == "cuda:0":
             print(str(ppo_trainer.accelerator.device))
