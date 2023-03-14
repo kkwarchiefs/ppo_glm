@@ -181,7 +181,7 @@ model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, tr
 model.set_tokenizer(tokenizer)
 # ref_model.set_tokenizer(tokenizer)
 print("start build dataset")
-dataset_path="/search/ai/kaitongyang/RLHF_DEBUG/RM/data/success-0223.json"
+# dataset_path="/search/ai/kaitongyang/RLHF_DEBUG/RM/data/success-0223.json"
 #dataset = build_dataset(dataset_path, tokenizer)
 dataset = PPOIdxDataset(tokenizer)
 #print(dataset)
@@ -207,7 +207,7 @@ RM_model.to(no_update_device)
 senti_tokenizer = AutoTokenizer.from_pretrained('/search/ai/pretrain_models/roberta-base-finetuned-jd-binary-chinese')
 # senti_model = AutoModelForSequenceClassification.from_pretrained('uer/roberta-base-finetuned-jd-binary-chinese')
 # sentiment_pipe = pipeline('sentiment-analysis', model=senti_model, tokenizer=senti_tokenizer, device=no_update_device)
-triton_client = httpclient.InferenceServerClient(url="10.212.204.89:8000")
+triton_client = httpclient.InferenceServerClient(url="10.160.239.132:8000")
 
 # We then define the arguments to pass to the `generate` function. These arguments
 # are passed to the `generate` function of the PPOTrainer, which is a wrapper around
