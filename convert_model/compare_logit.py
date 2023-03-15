@@ -32,7 +32,7 @@ for query_text, response_text in [('什么人不能喝三七粉', '服用三七�
     temp_inputs = tokenizer(query_text + "[gMASK]", return_tensors="pt", padding=True)
     temp_inputs = tokenizer.build_inputs_for_generation(temp_inputs, targets=response_text, max_gen_length=32, padding=False).to(device)
     model_out = model(**temp_inputs)
-    logits = logprobs_from_logits(model_out.logits.cpu(), temp_inputs['input_ids'])
+    logits = logprobs_from_logits(model_out.logits.cpu(), temp_inputs['input_ids'].cpu())
     print('logit', logits)
     temp_inputs.to("cpu")
     inputs = []
@@ -52,5 +52,5 @@ for query_text, response_text in [('什么人不能喝三七粉', '服用三七�
         timeout=300 * 1000
     )
     results = results.as_numpy('output')
-    logits_remote = logprobs_from_logits(torch.tensor(results, dtype=torch.float32), temp_inputs['input_ids'])
+    logits_remote = logprobs_from_logits(torch.tensor(results, dtype=torch.float32), temp_inputs['input_ids'].cpu())
     print('results', results)
