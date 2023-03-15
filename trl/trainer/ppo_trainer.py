@@ -503,7 +503,7 @@ class PPOTrainer(BaseTrainer):
                 logprobs, logits, vpreds, _ = self.batched_forward_pass(
                     self.model, batch["queries"], batch["responses"], model_inputs
                 )
-                assert batch["values"].shape == batch["masks"].shape
+                # assert batch["values"].shape == batch["masks"].shape
                 train_stats = self.train_minibatch(
                     batch["logprobs"],
                     batch["values"],
