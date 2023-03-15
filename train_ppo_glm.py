@@ -120,9 +120,9 @@ config = PPOConfig(
     model_name="/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/glm_0.5",
     learning_rate=1e-6,
     batch_size=8,
-    ppo_epochs=1,
+    ppo_epochs=2,
     log_with="wandb",
-    init_kl_coef=1.,
+    init_kl_coef=5.,
     remove_unused_columns=False,
     mini_batch_size=8
 )
