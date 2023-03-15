@@ -100,7 +100,7 @@ class GLMPPOTrainer(PPOTrainer):
     def generate(self, inputs, gen_len):
         #response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_length=512, eos_token_id=50007, num_beams=1, no_repeat_ngram_size=7, repetition_penalty=1.1, min_length=3)
         #response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_new_tokens=gen_len, eos_token_id=50007, num_beams=1, no_repeat_ngram_size=7, repetition_penalty=1.1, min_length=3)
-        response = self.accelerator.unwrap_model(self.model).generate(**inputs, eos_token_id=-1, max_length=256, top_k=0, top_p=1.0)
+        response = self.accelerator.unwrap_model(self.model).generate(**inputs, eos_token_id=50007, max_length=256, top_k=0, top_p=1.0)
         return response
 
 
@@ -283,7 +283,13 @@ for cur_big_epoch in range(10):
             timeout=300 * 1000
         )
         results = results.as_numpy('output')
-        rewards = [torch.tensor(results[i][0]) for i in range(len(results))]
+        rewards = []
+        for rsp in batch["response"]:
+            if len(rsp) < 100:
+                rewards.append(torch.tensor(-20.))
+            else:
+                rewards.append(torch.tensor(20.))
+        # rewards = [torch.tensor(results[i][0]) for i in range(len(results))]
         # except:
         #     rewards = [torch.tensor(0.)]*config.batch_size
         #print(rewards)
