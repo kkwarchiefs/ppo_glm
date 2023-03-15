@@ -180,16 +180,17 @@ set_seed(0)
 print("os LOCAL_RANK", os.environ["LOCAL_RANK"])
 if int(os.environ["LOCAL_RANK"]) % 2 == 1:
     print("sleep some time" )
-    time.sleep(120)
+    time.sleep(80)
 
 # Now let's build the model, the reference model, and the tokenizer.
+time.sleep(os.environ["LOCAL_RANK"])
 tokenizer = AutoTokenizer.from_pretrained(config.model_name, trust_remote_code=True)
 model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True, remote_ip='10.212.207.33:8000')
 # ref_model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True)
 model.set_tokenizer(tokenizer)
 # ref_model.set_tokenizer(tokenizer)
 print("start build dataset")
-dataset_path="/search/ai/kaitongyang/RLHF_DEBUG/RM/data/success-0223.json"
+# dataset_path="/search/ai/kaitongyang/RLHF_DEBUG/RM/data/success-0223.json"
 #dataset = build_dataset(dataset_path, tokenizer)
 dataset = PPOIdxDataset(tokenizer)
 #print(dataset)
