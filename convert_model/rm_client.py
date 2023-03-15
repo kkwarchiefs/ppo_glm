@@ -29,7 +29,7 @@ for line in open(sys.argv[1]):
     pairlist.append((prompt, resp))
     # random.shuffle(pairlist)
 
-for query_text, response_text in pairlist[:30]:
+for query_text, response_text in pairlist[:100]:
     prompt = query_text.replace("<|startofpiece|>", "").replace("[回答]", "").replace("[CLS]", "").replace("\n", "").replace(
         "<n>", "").replace("<|endoftext|>", "").replace("[gMASK]", "")
     response = response_text.replace("<|startofpiece|>", "").replace("<|endofpiece|>", "").replace("<|endoftext|>",
@@ -54,4 +54,4 @@ for query_text, response_text in pairlist[:30]:
     )
     results = results.as_numpy('output')
     rewards = [torch.tensor(results[i][0]) for i in range(len(results))]
-    print('mean_kl', query_text, response_text, rewards)
+    print('mean_kl', query_text, (response_text,), rewards)
