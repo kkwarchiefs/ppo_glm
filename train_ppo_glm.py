@@ -227,6 +227,8 @@ for cur_big_epoch in range(10):
             cur_text = tokenizer.decode(query_input_ids_tensors[i][0][1:-1])
             texts.append(cur_text)
         query_tensor = tokenizer(texts, padding=True, return_tensors="pt")
+        for key in query_tensor:
+            query_tensor[key] = query_tensor[key][:, :-1]
         query_tensor = tokenizer.build_inputs_for_generation(query_tensor, max_gen_length=512)
         query_tensor.to(device)
         if str(ppo_trainer.accelerator.device) == "cuda:0":
