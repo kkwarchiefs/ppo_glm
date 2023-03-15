@@ -82,8 +82,8 @@ def GetRmBatchNumpy(prompt_list, response_list, RM_tokenizer):
     token_type_ids_list = []
     prompt_res = []
     for prompt, response in zip(prompt_list, response_list):
-        prompt = prompt.replace("<|startofpiece|>", "").replace("[回答]", "").replace("[CLS]", "").replace("\n", "").replace("<n>", "")
-        response = response.replace("<|startofpiece|>", "").replace("<|endofpiece|>", "").replace("<|endoftext|>", "").replace("<n>", "##402").replace(" ","")
+        prompt = prompt.replace("<|startofpiece|>", "").replace("[回答]", "").replace("[CLS]", "").replace("\n", "").replace("<n>", "").replace("<|endoftext|>", "").replace("[gMASK]", "")
+        response = response.replace("<|startofpiece|>", "").replace("<|endofpiece|>", "").replace("<|endoftext|>", "").replace(" ","")
         new_prompt = prompt + "[UNUSED1]" + response
         prompt_res.append(new_prompt[:500])
         # RM_input = RM_tokenizer((prompt + "[UNUSED1]" + response)[:300], max_length=512, padding=True)
@@ -135,23 +135,6 @@ print(config.ppo_epochs)
 # We set `return_all_scores` to True to get the sentiment score for each token.
 
 
-def build_dataset(data_path, tokenizer):
-    datas = open(data_path).read().splitlines()
-    input_ids_list = []
-    position_ids_list = []
-    generation_attention_mask_list = []
-    for data in datas[:2000]:
-        data = json.loads(data)
-        prompt = data["prompt"]
-        inputs = tokenizer(prompt+" [回答]"+"[gMASK]", return_tensors="pt")
-        for key in inputs:
-            inputs[key] = inputs[key][:,:-1]
-        inputs = tokenizer.build_inputs_for_generation(inputs, max_gen_length=512)
-        input_ids_list.append(inputs["input_ids"])
-        position_ids_list.append(inputs["position_ids"])
-        generation_attention_mask_list.append(inputs["generation_attention_mask"]) 
-    result = Dataset.from_dict({"input_ids": input_ids_list, "position_ids":position_ids_list, "generation_attention_mask":generation_attention_mask_list})
-    return result
 
 class PPOIdxDataset(Dataset):
     def __init__(self, tokenizer):
@@ -164,7 +147,7 @@ class PPOIdxDataset(Dataset):
     def __getitem__(self, index):
         self.f.seek(self.offsets[index], 0)
         cur_data = self.f.readline()
-        inputs = self.tokenizer(cur_data + "[gMASK]", return_tensors="pt")
+        inputs = self.tokenizer(cur_data + "[回答][gMASK]", return_tensors="pt")
         for key in inputs:
             inputs[key] = inputs[key][:,:-1]
         inputs = tokenizer.build_inputs_for_generation(inputs, max_gen_length=300)
@@ -230,7 +213,7 @@ generation_kwargs = {
     "min_length":3,
 }
 output_min_length = 20
-output_max_length = 80 
+output_max_length = 40
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
 #print("*"*10)
 #print(len(ppo_trainer.dataloader))
@@ -262,12 +245,9 @@ for cur_big_epoch in range(10):
                 else:
                     cur_response_tensor.append(cur_id)
             response_tensor.append(torch.tensor(cur_response_tensor))
-        padding_mask = response!=50007
-        padding_mask = padding_mask.int()
-        response_tensor = [torch.tensor(i[:sum(j)+1]) for i,j in zip(response.tolist(), padding_mask.tolist())]
         batch["query"] = [tokenizer.decode(r) for r in query_tensor["input_ids"].tolist()]
         batch["response"] = [tokenizer.decode(logits) for logits in response_tensor]
-
+        print(batch["query"], batch["response"])
         ''' 
         if str(ppo_trainer.accelerator.device) == "cuda:0":
             print(batch["query"])
