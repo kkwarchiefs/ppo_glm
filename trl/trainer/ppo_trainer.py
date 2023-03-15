@@ -747,8 +747,12 @@ class PPOTrainer(BaseTrainer):
             non_score_reward = -self.kl_ctl.value * kl
             non_score_rewards.append(non_score_reward)
             reward = non_score_reward.clone()
-            last_non_masked_index = mask.nonzero()[-1]
-            reward[last_non_masked_index] += score
+            try:
+                last_non_masked_index = mask.nonzero()[-1]
+                reward[last_non_masked_index] += score
+            except:
+                reward[0] += score
+                print("mask.nonzero() index -1 is out of bounds for dimension 0 with size 0")
             rewards.append(reward)
         return torch.stack(rewards), torch.stack(non_score_rewards)
 

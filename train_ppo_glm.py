@@ -100,7 +100,7 @@ class GLMPPOTrainer(PPOTrainer):
     def generate(self, inputs, gen_len):
         #response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_length=512, eos_token_id=50007, num_beams=1, no_repeat_ngram_size=7, repetition_penalty=1.1, min_length=3)
         #response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_new_tokens=gen_len, eos_token_id=50007, num_beams=1, no_repeat_ngram_size=7, repetition_penalty=1.1, min_length=3)
-        response = self.accelerator.unwrap_model(self.model).generate(**inputs, eos_token_id=50007, max_length=512, min_length=-1, top_k=0.0, top_p=0.95, do_sample=True)
+        response = self.accelerator.unwrap_model(self.model).generate(**inputs, eos_token_id=50007, max_length=512, min_length=-1, top_k=0.0, top_p=0.90, do_sample=True)
         return response
 
 
