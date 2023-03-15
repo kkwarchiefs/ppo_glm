@@ -294,7 +294,7 @@ for cur_big_epoch in range(10):
             print("ppo trainer time : " + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         ppo_trainer.log_stats(stats, batch, rewards)
 
-        if epoch%500 == 0 and str(ppo_trainer.accelerator.device) == "cuda:0":
+        if (epoch+1) %500 == 0 and str(ppo_trainer.accelerator.device) == "cuda:0":
             reward_path = "/search/ai/jamsluo/GLM_RLHF/ppo_glm/RLHF_MODEL_10b_glm_fb16"
             root_path = os.path.join(reward_path, str(cur_big_epoch) + "_" + str(epoch))
             if os.path.exists(root_path):
