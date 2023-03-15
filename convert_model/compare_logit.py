@@ -20,11 +20,20 @@ model = AutoModelForSeq2SeqLM.from_pretrained(model_path, trust_remote_code=True
 model = model.half().to(device).eval()
 triton_client = httpclient.InferenceServerClient(url='10.212.207.33:8000', connection_timeout=300, network_timeout=300)
 
+def logprobs_from_logits(logits, labels):
+    """
+    See: https://github.com/pytorch/pytorch/issues/563#issuecomment-330103591
+    """
+    logp = torch.nn.functional.log_softmax(logits, dim=2)
+    logpy = torch.gather(logp, 2, labels.unsqueeze(2)).squeeze(-1)
+    return logpy
+
 for query_text, response_text in [('什么人不能喝三七粉', '服用三七粉期间,孕妇和儿童不宜使用。 三七粉是处方药,不是药品。 过量服用会引起中毒。')]:
     temp_inputs = tokenizer(query_text + "[gMASK]", return_tensors="pt", padding=True)
-    temp_inputs = tokenizer.build_inputs_for_generation(temp_inputs, targets=response_text, max_gen_length=512, padding=False).to(device)
-    logit =  model(**temp_inputs)
-    print('logit', logit.cpu().numpy())
+    temp_inputs = tokenizer.build_inputs_for_generation(temp_inputs, targets=response_text, max_gen_length=32, padding=False).to(device)
+    model_out =  model(**temp_inputs)
+    logits = logprobs_from_logits(model_out.logits.cpu(), temp_inputs['input_ids'])
+    print('logit', logits)
     temp_inputs.to("cpu")
     inputs = []
     inputs.append(httpclient.InferInput('input_ids', list(temp_inputs['input_ids'].shape), 'INT64'))
@@ -43,4 +52,5 @@ for query_text, response_text in [('什么人不能喝三七粉', '服用三七�
         timeout=300 * 1000
     )
     results = results.as_numpy('output')
+    logits_remote = logprobs_from_logits(torch.tensor(results), temp_inputs['input_ids'])
     print('results', results)
