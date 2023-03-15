@@ -7,6 +7,8 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+
+import random
 import sys
 import codecs
 from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM
@@ -27,14 +29,22 @@ def logprobs_from_logits(logits, labels):
     logp = torch.nn.functional.log_softmax(logits, dim=2)
     logpy = torch.gather(logp, 2, labels.unsqueeze(2)).squeeze(-1)
     return logpy
+pairlist = []
+for line in open(sys.argv[1]):
+    group = line.strip().split('\t')
+    prompt = group[0]
+    resp = eval(group[1])[0]
+    label = int(group[2])
+    pairlist.append((prompt, resp))
+    random.shuffle(pairlist)
 
-for query_text, response_text in [('什么人不能喝三七粉', '服用三七粉期间,孕妇和儿童不宜使用。 三七粉是处方药,不是药品。 过量服用会引起中毒。')]:
+for query_text, response_text in pairlist[:20]:
     temp_inputs = tokenizer(query_text + "[gMASK]", return_tensors="pt", padding=True)
-    temp_inputs = tokenizer.build_inputs_for_generation(temp_inputs, targets=response_text, max_gen_length=32, padding=False).to(device)
+    temp_inputs = tokenizer.build_inputs_for_generation(temp_inputs, targets=response_text, max_gen_length=128, padding=False).to(device)
     model_out = model(**temp_inputs)
     print(model_out.logits.shape, temp_inputs['input_ids'].shape)
-    logits = logprobs_from_logits(model_out.logits.cpu(), temp_inputs['input_ids'].cpu())
-    print('logit', logits)
+    all_logprobs = logprobs_from_logits(model_out.logits.cpu(), temp_inputs['input_ids'].cpu())
+    print('logit', all_logprobs)
     temp_inputs.to("cpu")
     inputs = []
     inputs.append(httpclient.InferInput('input_ids', list(temp_inputs['input_ids'].shape), 'INT64'))
@@ -53,6 +63,9 @@ for query_text, response_text in [('什么人不能喝三七粉', '服用三七�
         timeout=300 * 1000
     )
     results = results.as_numpy('output')
-    logits_remote = logprobs_from_logits(torch.tensor(results, dtype=torch.float32), temp_inputs['input_ids'].cpu())
-    print('results', logits_remote)
-    print(results.size())
+    ref_logprobs = logprobs_from_logits(torch.tensor(results, dtype=torch.float32), temp_inputs['input_ids'].cpu())
+    print('results', ref_logprobs)
+    print(results.size)
+    kl_list = ((all_logprobs - ref_logprobs)).sum(axis=-1)
+    mean_kl = kl_list.mean()
+    print('mean_kl', query_text, response_text, mean_kl)
