@@ -36,7 +36,7 @@ for query_text, response_text in pairlist[:30]:
                                                                                               "").replace(" ", "")
     new_prompt = prompt + "[UNUSED1]" + response
     RM_input = tokenizer(new_prompt, max_length=512, padding=True)
-    result = [torch.tensor(RM_input["input_ids"]).numpy(), torch.tensor(RM_input["attention_mask"]).numpy()]
+    result = [torch.tensor([RM_input["input_ids"]]).numpy(), torch.tensor([RM_input["attention_mask"]]).numpy()]
     inputs = []
     inputs.append(httpclient.InferInput('input_ids', list(result[0].shape), 'INT64'))
     inputs.append(httpclient.InferInput('attention_mask', list(result[1].shape), 'INT64'))
