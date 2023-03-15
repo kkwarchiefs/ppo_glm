@@ -252,6 +252,18 @@ for cur_big_epoch in range(10):
         response = ppo_trainer.generate(query_tensor, gen_len)[:, query_tensor["input_ids"].size()[1]:]
         padding_mask = response!=50007
         padding_mask = padding_mask.int()
+        response_tensor_temp = [i[:sum(j)+1] for i,j in zip(response.tolist(), padding_mask.tolist())]
+        response_tensor = []
+        for temp_logit in response_tensor_temp:
+            cur_response_tensor = []
+            for cur_id in temp_logit:
+                if int(cur_id) >= 50009:
+                    break
+                else:
+                    cur_response_tensor.append(cur_id)
+            response_tensor.append(torch.tensor(cur_response_tensor))
+        padding_mask = response!=50007
+        padding_mask = padding_mask.int()
         response_tensor = [torch.tensor(i[:sum(j)+1]) for i,j in zip(response.tolist(), padding_mask.tolist())]
         batch["query"] = [tokenizer.decode(r) for r in query_tensor["input_ids"].tolist()]
         batch["response"] = [tokenizer.decode(logits) for logits in response_tensor]
