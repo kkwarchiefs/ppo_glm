@@ -246,6 +246,7 @@ for cur_big_epoch in range(10):
                     continue
                 else:
                     cur_response_tensor.append(cur_id)
+            assert len(cur_response_tensor) > 0
             response_tensor.append(torch.tensor(cur_response_tensor))
         batch["query"] = [tokenizer.decode(r) for r in query_tensor["input_ids"].tolist()]
         batch["response"] = [tokenizer.decode(logits) for logits in response_tensor]
