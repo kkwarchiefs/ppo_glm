@@ -470,8 +470,8 @@ class PPOTrainer(BaseTrainer):
         mini_batch_dict = {
             "queries": queries,
             "responses": responses,
-            "logprobs": all_logprobs.clone().detach(),
-            "values": values.clone().detach(),
+            "logprobs": torch.tensor(all_logprobs, dtype=torch.float32),
+            "values": torch.tensor(values, dtype=torch.float32),
             "rewards": rewards,
             "masks": masks,
         }
