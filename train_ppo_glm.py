@@ -100,7 +100,7 @@ class GLMPPOTrainer(PPOTrainer):
     def generate(self, inputs, gen_len):
         #response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_length=512, eos_token_id=50007, num_beams=1, no_repeat_ngram_size=7, repetition_penalty=1.1, min_length=3)
         #response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_new_tokens=gen_len, eos_token_id=50007, num_beams=1, no_repeat_ngram_size=7, repetition_penalty=1.1, min_length=3)
-        response = self.accelerator.unwrap_model(self.model).generate(**inputs, eos_token_id=50007, max_length=256, top_k=0, top_p=1.0, repetition_penalty=1.3, do_sample=True)
+        response = self.accelerator.unwrap_model(self.model).generate(**inputs, eos_token_id=50007, max_length=256, top_k=0, top_p=1.0, do_sample=True)
         return response
 
 
@@ -117,11 +117,11 @@ def set_seed(seed: int):
 
 
 config = PPOConfig(
-    model_name="/search/ai/kaitongyang/online/model/GLM-10B-chinese-customization_03-07-21-23/",
+    model_name="/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/glm_0.5",
     learning_rate=1e-6,
     batch_size=1,
     ppo_epochs=3,
-    log_with="wandb",
+    # log_with="wandb",
     init_kl_coef=0.1,
     remove_unused_columns=False,
     mini_batch_size=1
@@ -227,8 +227,8 @@ for cur_big_epoch in range(10):
             cur_text = tokenizer.decode(query_input_ids_tensors[i][0][1:-1])
             texts.append(cur_text)
         query_tensor = tokenizer(texts, padding=True, return_tensors="pt")
-        for key in query_tensor:
-            query_tensor[key] = query_tensor[key][:, :-1]
+        # for key in query_tensor:
+        #     query_tensor[key] = query_tensor[key][:, :-1]
         query_tensor = tokenizer.build_inputs_for_generation(query_tensor, max_gen_length=512)
         query_tensor.to(device)
         if str(ppo_trainer.accelerator.device) == "cuda:0":
@@ -249,12 +249,12 @@ for cur_big_epoch in range(10):
             response_tensor.append(torch.tensor(cur_response_tensor))
         batch["query"] = [tokenizer.decode(r) for r in query_tensor["input_ids"].tolist()]
         batch["response"] = [tokenizer.decode(logits) for logits in response_tensor]
-        print(batch["query"], batch["response"])
-        ''' 
         if str(ppo_trainer.accelerator.device) == "cuda:0":
-            print(batch["query"])
-            print(batch["response"])
-        '''
+            for i,j in zip(batch["query"], batch["response"]):
+                print("*"*6)
+                print(i)
+                print("="*3)
+                print(j)
         if str(ppo_trainer.accelerator.device) == "cuda:0":
             print("inference: " +  str(sum([len(i) for i  in batch["response"]])) + "time :" +datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         #### Compute sentiment score
