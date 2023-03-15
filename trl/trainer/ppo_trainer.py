@@ -756,7 +756,7 @@ class PPOTrainer(BaseTrainer):
                 reward[last_non_masked_index] += score
             except:
                 print(mask)
-                reward[0] += score
+                reward[-1] += score
                 print("mask.nonzero() index -1 is out of bounds for dimension 0 with size 0")
             rewards.append(reward)
         return torch.stack(rewards), torch.stack(non_score_rewards)
