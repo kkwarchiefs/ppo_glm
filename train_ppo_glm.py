@@ -122,7 +122,7 @@ config = PPOConfig(
     batch_size=8,
     ppo_epochs=1,
     log_with="wandb",
-    init_kl_coef=0.1,
+    init_kl_coef=1.,
     remove_unused_columns=False,
     mini_batch_size=8
 )
