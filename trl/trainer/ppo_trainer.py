@@ -755,6 +755,7 @@ class PPOTrainer(BaseTrainer):
                 last_non_masked_index = mask.nonzero()[-1]
                 reward[last_non_masked_index] += score
             except:
+                print(mask)
                 reward[0] += score
                 print("mask.nonzero() index -1 is out of bounds for dimension 0 with size 0")
             rewards.append(reward)
