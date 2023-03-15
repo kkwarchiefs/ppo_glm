@@ -65,7 +65,6 @@ for query_text, response_text in pairlist[:20]:
     results = results.as_numpy('output')
     ref_logprobs = logprobs_from_logits(torch.tensor(results, dtype=torch.float32), temp_inputs['input_ids'].cpu())
     print('results', ref_logprobs)
-    print(results.size)
     kl_list = ((all_logprobs - ref_logprobs)).sum(axis=-1)
     mean_kl = kl_list.mean()
     print('mean_kl', query_text, response_text, mean_kl)
