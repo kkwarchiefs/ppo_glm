@@ -744,8 +744,10 @@ class PPOTrainer(BaseTrainer):
         rewards, non_score_rewards = [], []
         for score, logprob, ref_logprob, mask in zip(scores, logprobs, ref_logprobs, masks):
             kl = logprob - ref_logprob
-            if kl.sum() < 0:
-                kl = torch.zeros_like(kl, dtype=torch.float32).to(kl.device)
+            kl[kl < 0] = 0
+            # print(kl, kl.shape)
+            # if kl.sum() < 0:
+            #     kl = torch.zeros_like(kl, dtype=torch.float32).to(kl.device)
             non_score_reward = -self.kl_ctl.value * kl
             non_score_rewards.append(non_score_reward)
             reward = non_score_reward.clone()
