@@ -113,7 +113,7 @@ def set_seed(seed: int):
 
 
 config = PPOConfig(
-    model_name="/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/small_glm",
+    model_name="/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/glm_0.5",
     learning_rate=5e-6,
     batch_size=4,
     ppo_epochs=1,
