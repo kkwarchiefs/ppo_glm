@@ -117,11 +117,11 @@ def set_seed(seed: int):
 
 
 config = PPOConfig(
-    model_name="/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/glm_0.5",
+    model_name="/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/small_glm",
     learning_rate=1e-6,
     batch_size=8,
     ppo_epochs=2,
-    log_with="wandb",
+    # log_with="wandb",
     init_kl_coef=5.,
     remove_unused_columns=False,
     mini_batch_size=8

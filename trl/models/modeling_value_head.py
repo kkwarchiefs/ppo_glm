@@ -319,8 +319,8 @@ class AutoModelForSeq2SeqLMWithValueHead(PreTrainedModelWrapper):
         query_text = [self.tokenizer.decode(i[1:sum(j)-2]) for i,j in zip(input_ids.tolist(), attention_mask.tolist())]
         #response_text = [self.tokenizer.decode(i[:sum(j)]) for i,j in zip(kwargs["decoder_input_ids"].tolist(), kwargs["decoder_attention_mask"].tolist())]
         response_text = [i[:sum(j)] for i,j in zip(kwargs["decoder_input_ids"].tolist(), kwargs["decoder_attention_mask"].tolist())]
-        # response_text_new = [self.tokenizer.decode(a) for a in response_text]
-        # print(response_text_new)
+        response_text_new = [self.tokenizer.decode(a) for a in response_text]
+        print("response_text_new", response_text_new)
         temp_inputs = self.tokenizer(query_text, return_tensors="pt", padding=True)
         temp_inputs = self.tokenizer.build_inputs_for_generation_test(temp_inputs, targets=response_text, max_gen_length=512, padding=False)
         device = input_ids.device
@@ -335,7 +335,7 @@ class AutoModelForSeq2SeqLMWithValueHead(PreTrainedModelWrapper):
             inputs[2].set_data_from_numpy(temp_inputs['attention_mask'].numpy())
             output = httpclient.InferRequestedOutput('output')
             results = self.triton_client.infer(
-                "REL_model_onnx",
+                "REL_large_onnx",
                 inputs,
                 model_version='1',
                 outputs=[output],
@@ -363,6 +363,7 @@ class AutoModelForSeq2SeqLMWithValueHead(PreTrainedModelWrapper):
         if lm_logits.dtype != torch.float32:
             lm_logits = lm_logits.float()
         cur_input_ids = temp_inputs["input_ids"][:,input_ids.size()[1]+1:]
+        print("cur_input", [self.tokenizer.decode(a) for a in cur_input_ids.tolist()])
         return (lm_logits, loss, value, cur_input_ids)
 
     def generate(self, *args, **kwargs):
