@@ -285,17 +285,7 @@ for cur_big_epoch in range(10):
             timeout=300 * 1000
         )
         results = results.as_numpy('output')
-        rewards = []
-        for rsp in batch["response"]:
-            tmp_score = 3. * (rsp.find(',') - 40)
-            rewards.append(torch.tensor(tmp_score))
-            # if len(rsp) < 100:
-            #     rewards.append(torch.tensor(128))
-            # else:
-            #     rewards.append(torch.tensor(20.))
-        # rewards = [torch.tensor(results[i][0]) for i in range(len(results))]
-        # except:
-        #     rewards = [torch.tensor(0.)]*config.batch_size
+        rewards = [torch.tensor(results[i][0]) for i in range(len(results))]
         #print(rewards)
         if str(ppo_trainer.accelerator.device) == "cuda:0":
             print(str(ppo_trainer.accelerator.device))
