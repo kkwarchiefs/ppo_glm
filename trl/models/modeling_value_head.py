@@ -256,7 +256,7 @@ class AutoModelForSeq2SeqLMWithValueHead(PreTrainedModelWrapper):
 
         self._init_weights(**v_head_kwargs)
         self.triton_client = httpclient.InferenceServerClient(url=v_head_kwargs['remote_ip'], connection_timeout=300, network_timeout=300)
-        self.remote_model = v_head_kwargs['remote_model']
+        self.remote_model = v_head_kwargs['triton_model_local']
     def set_tokenizer(self, tokenizer):
         self.tokenizer = tokenizer
 
