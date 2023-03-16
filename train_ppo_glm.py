@@ -285,7 +285,7 @@ for cur_big_epoch in range(10):
         results = results.as_numpy('output')
         rewards = []
         for rsp in batch["response"]:
-            tmp_score = 3 * (rsp.find(',') - 40)
+            tmp_score = 3. * (rsp.find(',') - 40)
             rewards.append(torch.tensor(tmp_score))
             # if len(rsp) < 100:
             #     rewards.append(torch.tensor(128))
