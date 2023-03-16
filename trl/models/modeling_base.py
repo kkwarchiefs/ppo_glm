@@ -39,7 +39,7 @@ class PreTrainedModelWrapper(nn.Module):
             The list of arguments that are supported by the wrapper class.
     """
     transformers_parent_class = None
-    supported_args = ['remote_ip', 'triton_model_local']
+    supported_args = []
     supported_modules = ("v_head",)
 
     def __init__(self, pretrained_model=None, **kwargs):

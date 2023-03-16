@@ -242,6 +242,7 @@ class AutoModelForSeq2SeqLMWithValueHead(PreTrainedModelWrapper):
         "v_head_initializer_range",
         "v_head_init_strategy",
         "remote_ip",
+        "triton_model_local",
     )
 
     def __init__(self, pretrained_model, **kwargs):
