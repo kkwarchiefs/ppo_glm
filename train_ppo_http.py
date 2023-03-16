@@ -45,7 +45,7 @@ import tritonclient.http as httpclient
 # configuration with `accelerate config`
 #
 ########################################################################
-
+remote_ip='10.212.207.33:8000'
 # We first define the configuration of the experiment, defining the model, the dataset,
 # the training parameters, and the PPO parameters.
 # Check the default arguments in the `PPOConfig` class for more details.
@@ -175,8 +175,7 @@ set_seed(0)
 
 # Now let's build the model, the reference model, and the tokenizer.
 tokenizer = AutoTokenizer.from_pretrained(config.model_name, trust_remote_code=True)
-kwargs = {'remote_ip': "10.212.204.89:8000"}
-model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True, **kwargs)
+model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True, remote_ip=remote_ip)
 # ref_model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True)
 model.set_tokenizer(tokenizer)
 # ref_model.set_tokenizer(tokenizer)
@@ -207,7 +206,7 @@ RM_model.to(no_update_device)
 senti_tokenizer = AutoTokenizer.from_pretrained('/search/ai/pretrain_models/roberta-base-finetuned-jd-binary-chinese')
 # senti_model = AutoModelForSequenceClassification.from_pretrained('uer/roberta-base-finetuned-jd-binary-chinese')
 # sentiment_pipe = pipeline('sentiment-analysis', model=senti_model, tokenizer=senti_tokenizer, device=no_update_device)
-triton_client = httpclient.InferenceServerClient(url="10.212.204.89:8000")
+triton_client = httpclient.InferenceServerClient(url=remote_ip)
 
 # We then define the arguments to pass to the `generate` function. These arguments
 # are passed to the `generate` function of the PPOTrainer, which is a wrapper around
@@ -278,7 +277,7 @@ for cur_big_epoch in range(10):
         inputs[2].set_data_from_numpy(RM_batch[2])
         output = httpclient.InferRequestedOutput('output')
         results = triton_client.infer(
-            "RM_model_onnx",
+            "RM_senti_onnx",
             inputs,
             model_version='1',
             outputs=[output],
