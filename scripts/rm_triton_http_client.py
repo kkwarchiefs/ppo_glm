@@ -10,7 +10,7 @@ import tritonclient.http as httpclient
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 model_name = "REL_model_onnx"  # 模型目录名/venus注册模型名称
-address = "10.212.207.33:8000"  # 机器地址
+address = "10.212.207.33:23451"  # 机器地址
 import json
 rm_model_path = "/search/ai/kaitongyang/RLHF_DEBUG/RM/reward_model_glm_10b_bak/final"
 tokenizer = AutoTokenizer.from_pretrained(rm_model_path, trust_remote_code=True)

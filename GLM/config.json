@@ -1,16 +1,20 @@
 {
-  "_name_or_path": "BAAI/glm-10b-chinese",
+  "_name_or_path": "/search/ai/kaitongyang/RLHF_DEBUG/RM/glm_0.5",
   "architectures": [
-    "GLMModel"
+    "GLMForSequenceClassification"
   ],
   "attention_dropout_prob": 0.1,
   "attention_scale": 1.0,
   "auto_map": {
     "AutoConfig": "configuration_glm.GLMConfig",
     "AutoModel": "modeling_glm.GLMModel",
+    "AutoModelForMultipleChoice": "modeling_glm.GLMForMultipleChoice",
     "AutoModelForSeq2SeqLM": "modeling_glm.GLMForConditionalGeneration",
-    "AutoModelForMultipleChoice": "modeling_glm.GLMForMultipleChoice"
-    },
+    "AutoModelForSequenceClassification": "modeling_glm.GLMForSequenceClassification"
+  },
+  "bad_words_id": [
+    50009
+  ],
   "block_position_encoding": true,
   "checkpoint_activations": false,
   "checkpoint_num_layers": 1,
@@ -28,8 +32,8 @@
   "relative_encoding": false,
   "spell_func": "lstm",
   "spell_length": null,
-  "torch_dtype": "float32",
-  "transformers_version": "4.23.1",
+  "torch_dtype": "bfloat16",
+  "transformers_version": "4.26.1",
   "vocab_size": 50048,
-  "bad_words_id": [50009]
+  "classifier_dropout": 0.1
 }
