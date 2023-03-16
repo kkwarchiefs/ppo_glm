@@ -446,8 +446,6 @@ class PPOTrainer(BaseTrainer):
         with torch.no_grad():
             all_logprobs, _, values, masks = self.batched_forward_pass(self.model, queries, responses, model_inputs)
             ref_logprobs, _, _, _ = self.batched_forward_pass(self.model, queries, responses, model_inputs, is_ref=True)
-            print("all_logprobs", all_logprobs.shape, all_logprobs)
-            print("ref_logprobs", ref_logprobs.shape, ref_logprobs)
             kl_list = ((all_logprobs - ref_logprobs) * masks).sum(axis=-1)
             mean_kl = kl_list.mean()
             print("mean_kl", mean_kl)
@@ -662,7 +660,13 @@ class PPOTrainer(BaseTrainer):
             #     logprobs = logits
             # else:
             #     logprobs = logprobs_from_logits(logits, cur_input_ids)
+            logprobs = logprobs_from_logits(logits[:, 1:], cur_input_ids)
+            print("all_logprobs1", logprobs.shape, logprobs[: 10])
+            logprobs = logprobs_from_logits(logits, cur_input_ids[:, 1:])
+            print("all_logprobs2", logprobs.shape, logprobs[: 10])
             logprobs = logprobs_from_logits(logits, cur_input_ids)
+            print("all_logprobs3", logprobs.shape, logprobs[: 10])
+
             #masks = torch.zeros_like(attention_mask)
             #masks[:, :-1] = attention_mask[:, 1:]
             #masks = attention_mask
