@@ -446,14 +446,14 @@ class PPOTrainer(BaseTrainer):
         with torch.no_grad():
             all_logprobs, _, values, masks = self.batched_forward_pass(self.model, queries, responses, model_inputs)
             ref_logprobs, _, _, _ = self.batched_forward_pass(self.model, queries, responses, model_inputs, is_ref=True)
-            # print("all_logprobs", all_logprobs.shape, all_logprobs)
-            # print("ref_logprobs", ref_logprobs.shape, ref_logprobs)
-            # kl_list = ((all_logprobs - ref_logprobs) * masks).sum(axis=-1)
-            # mean_kl = kl_list.mean()
-            # print("mean_kl", mean_kl)
+            print("all_logprobs", all_logprobs.shape, all_logprobs)
+            print("ref_logprobs", ref_logprobs.shape, ref_logprobs)
+            kl_list = ((all_logprobs - ref_logprobs) * masks).sum(axis=-1)
+            mean_kl = kl_list.mean()
+            print("mean_kl", mean_kl)
         timing["time/ppo/forward_pass"] = time.time() - t
         t = time.time()
-        
+        exit(-1)
         rewards, non_score_reward = self.compute_rewards(scores, all_logprobs, ref_logprobs, masks)
         timing["time/ppo/compute_rewards"] = time.time() - t
        
