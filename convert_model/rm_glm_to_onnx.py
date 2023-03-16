@@ -20,6 +20,7 @@ RM_model_path = "/search/ai/kaitongyang/RLHF_DEBUG/RM/summarization_reward_model
 RM_model_path = '/search/ai/pretrain_models/roberta-base-finetuned-jd-binary-chinese'
 RM_model_path = "/search/ai/kaitongyang/RLHF_DEBUG/RM/reward_model_glm_10b_bak/final"
 RM_model_path = "/search/ai/kaitongyang/RLHF_DEBUG/RM/reward_model_glm_10b/checkpoint-955"
+RM_model_path = "/search/ai/kaitongyang/RLHF_DEBUG/RM/reward_model_glm_10b/checkpoint-3439"
 
 RM_tokenizer = AutoTokenizer.from_pretrained(RM_model_path, trust_remote_code=True)
 RM_model = AutoModelForSequenceClassification.from_pretrained(RM_model_path, torchscript=True, trust_remote_code=True)

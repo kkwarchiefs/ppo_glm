@@ -143,7 +143,7 @@ class PPOIdxDataset(Dataset):
     def __getitem__(self, index):
         self.f.seek(self.offsets[index], 0)
         cur_data = self.f.readline()
-        inputs = self.tokenizer(cur_data + "[回答][gMASK]", return_tensors="pt")
+        inputs = self.tokenizer("基于“" + cur_data + "”生成评论[gMASK]", return_tensors="pt")
         for key in inputs:
             inputs[key] = inputs[key][:,:-1]
         inputs = tokenizer.build_inputs_for_generation(inputs, max_gen_length=300)
