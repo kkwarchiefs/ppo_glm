@@ -450,8 +450,6 @@ class PPOTrainer(BaseTrainer):
             mean_kl = kl_list.mean()
             print("mean_kl", mean_kl)
         timing["time/ppo/forward_pass"] = time.time() - t
-        t = time.time()
-        exit(-1)
         rewards, non_score_reward = self.compute_rewards(scores, all_logprobs, ref_logprobs, masks)
         timing["time/ppo/compute_rewards"] = time.time() - t
        
@@ -660,20 +658,7 @@ class PPOTrainer(BaseTrainer):
             #     logprobs = logits
             # else:
             #     logprobs = logprobs_from_logits(logits, cur_input_ids)
-            logprobs = logprobs_from_logits(logits[:, 1:], cur_input_ids[:, :-1])
-            print("all_logprobs1", logprobs.shape, logprobs[:, :6], logprobs.sum(axis=-1))
-            logprobs = logprobs_from_logits(logits[:, :-1], cur_input_ids[:, 1:])
-            print("all_logprobs2", logprobs.shape, logprobs[:, :6], logprobs.sum(axis=-1))
-            logprobs = logprobs_from_logits(logits[:, 2:], cur_input_ids[:, :-2])
-            print("all_logprobs11", logprobs.shape, logprobs[:, :6], logprobs.sum(axis=-1))
-            logprobs = logprobs_from_logits(logits[:, :-2], cur_input_ids[:, 2:])
-            print("all_logprobs22", logprobs.shape, logprobs[:, :6], logprobs.sum(axis=-1))
-            logprobs = logprobs_from_logits(logits[:, 3:], cur_input_ids[:, :-3])
-            print("all_logprobs11", logprobs.shape, logprobs[:, :6], logprobs.sum(axis=-1))
-            logprobs = logprobs_from_logits(logits[:, :-3], cur_input_ids[:, 3:])
-            print("all_logprobs22", logprobs.shape, logprobs[:, :6], logprobs.sum(axis=-1))
             logprobs = logprobs_from_logits(logits, cur_input_ids)
-            print("all_logprobs3", logprobs.shape, logprobs[:, :6], logprobs.sum(axis=-1))
 
             #masks = torch.zeros_like(attention_mask)
             #masks[:, :-1] = attention_mask[:, 1:]
