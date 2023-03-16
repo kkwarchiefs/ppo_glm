@@ -662,12 +662,14 @@ class PPOTrainer(BaseTrainer):
             #     logprobs = logits
             # else:
             #     logprobs = logprobs_from_logits(logits, cur_input_ids)
-            logprobs = logprobs_from_logits(logits, cur_input_ids)
+            # logprobs = logprobs_from_logits(logits, cur_input_ids)
+            logprobs = logprobs_from_logits(logits[:, :-1, :], cur_input_ids[:, 1:])
             #masks = torch.zeros_like(attention_mask)
             #masks[:, :-1] = attention_mask[:, 1:]
             #masks = attention_mask
-            #masks = torch.ones_like(logprobs)
-            masks = input_kwargs["decoder_attention_mask"]
+            masks = torch.zeros_like(logprobs)
+            # masks = input_kwargs["decoder_attention_mask"]
+            masks[:, :-1] = input_kwargs["decoder_attention_mask"][:, 1:]
             all_logits.append(logits)
             all_values.append(values)
             all_logprobs.append(logprobs)
@@ -747,7 +749,7 @@ class PPOTrainer(BaseTrainer):
             # kl_clone = kl.clone().to(kl.device)
             # kl_clone[kl > 0] = 0
             # kl[kl < 0] = 0
-            kl = torch.abs(kl)
+            # kl = torch.abs(kl)
             # print(kl, kl.shape)
             # if kl.sum() < 0:
             #     kl = torch.zeros_like(kl, dtype=torch.float32).to(kl.device)
