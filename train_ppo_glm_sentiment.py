@@ -82,17 +82,13 @@ def GetRmBatchNumpy(prompt_list, response_list, RM_tokenizer):
     token_type_ids_list = []
     prompt_res = []
     for prompt, response in zip(prompt_list, response_list):
-        prompt = prompt.replace("<|startofpiece|>", "").replace("[回答]", "").replace("[CLS]", "").replace("\n", "").replace("<n>", "").replace("<|endoftext|>", "").replace("[gMASK]", "")
-        response = response.replace("<|startofpiece|>", "").replace("<|endofpiece|>", "").replace("<|endoftext|>", "").replace(" ","")
-        new_prompt = prompt + "[UNUSED1]" + response
-        prompt_res.append(new_prompt[:500])
-        # RM_input = RM_tokenizer((prompt + "[UNUSED1]" + response)[:300], max_length=512, padding=True)
-        # input_ids_list.append(RM_input["input_ids"])
-        # attention_mask_list.append(RM_input["attention_mask"])
-        # token_type_ids_list.append(RM_input["token_type_ids"])
-    RM_input = RM_tokenizer(prompt_res, max_length=512, padding=True)
-    # print('RM_input:', RM_input)
-    result = [torch.tensor(RM_input["input_ids"]).numpy(),  torch.tensor(RM_input["attention_mask"]).numpy()]
+        prompt = prompt.replace("<|startofpiece|>", "").replace("[回答]", "").replace("[CLS]", "").replace("\n", "").replace("<n>", "")
+        response = response.replace("<|startofpiece|>", "").replace("<|endofpiece|>", "").replace("<|endoftext|>", "").replace("<n>", "##402").replace(" ","")
+        RM_input = RM_tokenizer(prompt, response, truncation=True, max_length=512, padding="max_length")
+        input_ids_list.append(RM_input["input_ids"])
+        attention_mask_list.append(RM_input["attention_mask"])
+        token_type_ids_list.append(RM_input["token_type_ids"])
+    result = [torch.tensor(input_ids_list).numpy(),  torch.tensor(attention_mask_list).numpy(), torch.tensor(token_type_ids_list).numpy()]
     # result = InputDict([("input_ids", torch.tensor(input_ids_list).to(cur_device)),("attention_mask", torch.tensor(attention_mask_list).to(cur_device)),("token_type_ids", torch.tensor(token_type_ids_list).to(cur_device))])
     return result
 
