@@ -660,9 +660,9 @@ class PPOTrainer(BaseTrainer):
             #     logprobs = logits
             # else:
             #     logprobs = logprobs_from_logits(logits, cur_input_ids)
-            logprobs = logprobs_from_logits(logits[:, 1:], cur_input_ids)
+            logprobs = logprobs_from_logits(logits[:, 1:], cur_input_ids[:, :-1])
             print("all_logprobs1", logprobs.shape, logprobs[: 10])
-            logprobs = logprobs_from_logits(logits, cur_input_ids[:, 1:])
+            logprobs = logprobs_from_logits(logits[:, :-1], cur_input_ids[:, 1:])
             print("all_logprobs2", logprobs.shape, logprobs[: 10])
             logprobs = logprobs_from_logits(logits, cur_input_ids)
             print("all_logprobs3", logprobs.shape, logprobs[: 10])
