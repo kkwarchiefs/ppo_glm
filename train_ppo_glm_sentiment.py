@@ -211,7 +211,7 @@ generation_kwargs = {
     "min_length":3,
 }
 output_min_length = 20
-output_max_length = 40
+output_max_length = 60
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
 #print("*"*10)
 #print(len(ppo_trainer.dataloader))
@@ -247,7 +247,7 @@ for cur_big_epoch in range(10):
             assert len(cur_response_tensor) > 0
             response_tensor.append(torch.tensor(cur_response_tensor))
         batch["query"] = [tokenizer.decode(r) for r in query_tensor["input_ids"].tolist()]
-        batch["response"] = [tokenizer.decode(logits) for logits in response_tensor]
+        batch["response"] = [tokenizer.decode(logits)[:gen_len] for logits in response_tensor]
         if str(ppo_trainer.accelerator.device) == "cuda:0":
             for i,j in zip(batch["query"], batch["response"]):
                 print("*"*6)
