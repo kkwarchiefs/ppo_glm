@@ -345,24 +345,24 @@ class AutoModelForSeq2SeqLMWithValueHead(PreTrainedModelWrapper):
             results = results.as_numpy('output')
             # print("results", results, results.shape)
             lm_logits = torch.tensor(results, dtype=torch.float32).to(device)
-            lm_logits = lm_logits[:,input_ids.size()[1]-1:-1,:]
-            cur_input_ids = temp_inputs["input_ids"][:,input_ids.size()[1]:].cpu().to(input_ids.device)
+            lm_logits = lm_logits[:,input_ids.size()[1]:,:]
+            cur_input_ids = temp_inputs["input_ids"][:,input_ids.size()[1]+1:].cpu().to(input_ids.device)
             return (lm_logits, None, torch.tensor([1.,1.], dtype=torch.float32).to(device), cur_input_ids)
 
         temp_inputs.to(input_ids.device)
         #print(temp_inputs)
         base_model_output = self.pretrained_model(**temp_inputs)
-        last_hidden_state = base_model_output.loss[:,input_ids.size()[1]-1:-1,:]
+        last_hidden_state = base_model_output.loss[:,input_ids.size()[1]:,:]
         loss = base_model_output.loss
         #last_hidden_state = base_model_output.mems[-1]
         #print(last_hidden_state.size())
-        lm_logits = base_model_output.logits[:,input_ids.size()[1]-1:-1,:]
+        lm_logits = base_model_output.logits[:,input_ids.size()[1],:]
         value = self.v_head(last_hidden_state).squeeze(-1)
 
         # force upcast in fp32 if logits are in half-precision
         if lm_logits.dtype != torch.float32:
             lm_logits = lm_logits.float()
-        cur_input_ids = temp_inputs["input_ids"][:,input_ids.size()[1]:]
+        cur_input_ids = temp_inputs["input_ids"][:,input_ids.size()[1]+1:]
         return (lm_logits, loss, value, cur_input_ids)
 
     def generate(self, *args, **kwargs):
