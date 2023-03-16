@@ -168,7 +168,7 @@ def collator(data):
 # Now let's build the model, the reference model, and the tokenizer.
 time.sleep(int(os.environ["LOCAL_RANK"]))
 tokenizer = AutoTokenizer.from_pretrained(config.model_name, trust_remote_code=True)
-model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True, remote_ip='10.212.207.33:8000')
+model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True, remote_ip='10.212.207.33:8000', remote_model="REL_large_onnx")
 # ref_model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True)
 model.set_tokenizer(tokenizer)
 # ref_model.set_tokenizer(tokenizer)

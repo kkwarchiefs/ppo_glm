@@ -256,6 +256,7 @@ class AutoModelForSeq2SeqLMWithValueHead(PreTrainedModelWrapper):
 
         self._init_weights(**v_head_kwargs)
         self.triton_client = httpclient.InferenceServerClient(url=v_head_kwargs['remote_ip'], connection_timeout=300, network_timeout=300)
+        self.remote_model = v_head_kwargs['remote_model']
     def set_tokenizer(self, tokenizer):
         self.tokenizer = tokenizer
 
@@ -334,7 +335,7 @@ class AutoModelForSeq2SeqLMWithValueHead(PreTrainedModelWrapper):
             inputs[2].set_data_from_numpy(temp_inputs['attention_mask'].numpy())
             output = httpclient.InferRequestedOutput('output')
             results = self.triton_client.infer(
-                "REL_large_onnx",
+                self.remote_model,
                 inputs,
                 model_version='1',
                 outputs=[output],
