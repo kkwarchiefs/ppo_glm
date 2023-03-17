@@ -95,7 +95,7 @@ class GLMPPOTrainer(PPOTrainer):
     def generate(self, inputs, gen_len):
         #response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_length=512, eos_token_id=50007, num_beams=1, no_repeat_ngram_size=7, repetition_penalty=1.1, min_length=3)
         #response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_new_tokens=gen_len, eos_token_id=50007, num_beams=1, no_repeat_ngram_size=7, repetition_penalty=1.1, min_length=3)
-        response = self.accelerator.unwrap_model(self.model).generate(**inputs, eos_token_id=50007, max_length=512, min_length=-1, top_k=0.0, top_p=1.0, do_sample=True)
+        response = self.accelerator.unwrap_model(self.model).generate(**inputs, eos_token_id=50007, max_length=256, min_length=-1, top_k=0.0, top_p=1.0, do_sample=True)
         return response
 
 
@@ -175,7 +175,7 @@ set_seed(0)
 
 # Now let's build the model, the reference model, and the tokenizer.
 tokenizer = AutoTokenizer.from_pretrained(config.model_name, trust_remote_code=True)
-model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True, remote_ip=remote_ip, triton_model_local="REL_large_onnx")
+model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True, remote_ip='10.212.207.33:12344', triton_model_local="REL_large_onnx")
 # ref_model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True)
 model.set_tokenizer(tokenizer)
 # ref_model.set_tokenizer(tokenizer)
@@ -244,20 +244,13 @@ for cur_big_epoch in range(10):
         padding_mask = padding_mask.int()
         response_tensor = [torch.tensor(i[:sum(j)+1]) for i,j in zip(response.tolist(), padding_mask.tolist())]
         batch["query"] = [tokenizer.decode(r) for r in query_tensor["input_ids"].tolist()]
-        response_tmp = []
-        for logits in response_tensor:
-            try:
-                response_tmp.append(tokenizer.decode(logits))
-            except:
-                print(logits)
-                exit(-1)
-        batch["response"] = response_tmp
-
-        ''' 
-        if str(ppo_trainer.accelerator.device) == "cuda:0":
-            print(batch["query"])
-            print(batch["response"])
-        '''
+        batch["response"] = [tokenizer.decode(logits) for logits in response_tensor]
+        # if str(ppo_trainer.accelerator.device) == "cuda:0":
+        #     for i,j in zip(batch["query"], batch["response"]):
+        #         print("*"*6)
+        #         print(i)
+        #         print("="*3)
+        #         print(j)
         if str(ppo_trainer.accelerator.device) == "cuda:0":
             print("inference: " +  str(sum([len(i) for i  in batch["response"]])) + "time :" +datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         #### Compute sentiment score
