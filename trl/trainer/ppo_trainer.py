@@ -832,9 +832,9 @@ class PPOTrainer(BaseTrainer):
         value_mean, value_var = masked_mean(values, mask), masked_var(values, mask)
 
         if str(value_mean.device) == "cuda:0":
-            print("pg_loss: ", pg_loss,  'pg_losses:',  pg_losses, "pg_losses2:", pg_losses2)
-            print("advantages:", advantages)
-            print("values:", values)
+            print("pg_loss: ", pg_loss,  'pg_losses:',  masked_mean(pg_losses, mask), "pg_losses2:", masked_mean(pg_losses2, mask))
+            print("advantages:", masked_mean(advantages, mask), advantages)
+            print("values:", masked_mean(values, mask), values)
 
         stats = dict(
             loss=dict(policy=pg_loss, value=vf_loss, total=loss),
