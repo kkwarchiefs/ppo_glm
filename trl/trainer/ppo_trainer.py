@@ -835,6 +835,7 @@ class PPOTrainer(BaseTrainer):
             print("pg_loss: ", pg_loss,  'pg_losses:',  masked_mean(pg_losses, mask), "pg_losses2:", masked_mean(pg_losses2, mask))
             print("advantages:", masked_mean(advantages, mask), advantages)
             print("values:", masked_mean(values, mask), values)
+            print("rewards:", masked_mean(rewards, mask),  rewards)
 
         stats = dict(
             loss=dict(policy=pg_loss, value=vf_loss, total=loss),
