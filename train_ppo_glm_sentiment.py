@@ -97,8 +97,7 @@ class GLMPPOTrainer(PPOTrainer):
     def generate(self, inputs, gen_len):
         #response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_length=512, eos_token_id=50007, num_beams=1, no_repeat_ngram_size=7, repetition_penalty=1.1, min_length=3)
         #response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_new_tokens=gen_len, eos_token_id=50007, num_beams=1, no_repeat_ngram_size=7, repetition_penalty=1.1, min_length=3)
-        response = self.accelerator.unwrap_model(self.model).generate(**inputs, eos_token_id=-1, max_length=256, min_length=-1, top_k=0, top_p=1, do_sample=True)
-        # response = self.accelerator.unwrap_model(self.model).generate(**inputs, eos_token_id=50007, max_length=256, min_length=10, top_k=5, top_p=0.8, repetition_penalty=1.3)
+        response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_new_tokens=gen_len, eos_token_id=50007, top_k=0, top_p=1, do_sample=True, temperature=0.7)
         return response
 
 
@@ -117,12 +116,12 @@ def set_seed(seed: int):
 config = PPOConfig(
     model_name="/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/glm_0.5",
     learning_rate=5e-6,
-    batch_size=6,
-    ppo_epochs=1,
+    batch_size=8,
+    ppo_epochs=2,
     log_with="wandb",
     init_kl_coef=2,
     remove_unused_columns=False,
-    mini_batch_size=6
+    mini_batch_size=4
 )
 #print(dir(config))
 print(config.batch_size)
@@ -145,7 +144,7 @@ class PPOIdxDataset(Dataset):
     def __getitem__(self, index):
         self.f.seek(self.offsets[index], 0)
         cur_data = self.f.readline()
-        inputs = self.tokenizer("基于“" + cur_data + "”生成评论[gMASK]", return_tensors="pt")
+        inputs = self.tokenizer("基于“" + cur_data + "”[回答][gMASK]", return_tensors="pt")
         for key in inputs:
             inputs[key] = inputs[key][:,:-1]
         inputs = tokenizer.build_inputs_for_generation(inputs, max_gen_length=300)
@@ -211,7 +210,7 @@ generation_kwargs = {
     "min_length":3,
 }
 output_min_length = 20
-output_max_length = 60
+output_max_length = 40
 output_length_sampler = LengthSampler(output_min_length, output_max_length)
 #print("*"*10)
 #print(len(ppo_trainer.dataloader))
@@ -247,7 +246,7 @@ for cur_big_epoch in range(10):
             assert len(cur_response_tensor) > 0
             response_tensor.append(torch.tensor(cur_response_tensor))
         batch["query"] = [tokenizer.decode(r) for r in query_tensor["input_ids"].tolist()]
-        batch["response"] = [tokenizer.decode(logits)[:gen_len] for logits in response_tensor]
+        batch["response"] = [tokenizer.decode(logits) for logits in response_tensor]
         if str(ppo_trainer.accelerator.device) == "cuda:0":
             for i,j in zip(batch["query"], batch["response"]):
                 print("*"*6)
@@ -296,7 +295,7 @@ for cur_big_epoch in range(10):
         ppo_trainer.log_stats(stats, batch, rewards)
 
         if (epoch+1) % 50 == 0 and str(ppo_trainer.accelerator.device) == "cuda:0":
-            reward_path = "/search/ai/jamsluo/GLM_RLHF/ppo_glm/RLHF_MODEL_10b_glm_fb16"
+            reward_path = "/search/ai/jamsluo/GLM_RLHF/ppo_glm/RLHF_MODEL_sent_glm_fb16"
             root_path = os.path.join(reward_path, str(cur_big_epoch) + "_" + str(epoch))
             if os.path.exists(root_path):
                 pass
