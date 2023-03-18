@@ -100,7 +100,7 @@ class GLMPPOTrainer(PPOTrainer):
     def generate(self, inputs, gen_len):
         #response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_length=512, eos_token_id=50007, num_beams=1, no_repeat_ngram_size=7, repetition_penalty=1.1, min_length=3)
         #response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_new_tokens=gen_len, eos_token_id=50007, num_beams=1, no_repeat_ngram_size=7, repetition_penalty=1.1, min_length=3)
-        response = self.accelerator.unwrap_model(self.model).generate(**inputs, eos_token_id=50007, max_length=256, min_length=-1, top_k=0, top_p=1, do_sample=True)
+        response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_new_tokens=gen_len, eos_token_id=50007, top_k=0, top_p=1, do_sample=True, temperature=0.7)
         return response
 
 
@@ -117,14 +117,14 @@ def set_seed(seed: int):
 
 
 config = PPOConfig(
-    model_name="/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/small_glm",
+    model_name="/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/glm_0.5",
     learning_rate=5e-6,
-    batch_size=16,
+    batch_size=8,
     ppo_epochs=1,
     # log_with="wandb",
-    init_kl_coef=0.5,
+    init_kl_coef=0.3,
     remove_unused_columns=False,
-    mini_batch_size=16
+    mini_batch_size=8
 )
 #print(dir(config))
 print(config.batch_size)
@@ -168,7 +168,7 @@ def collator(data):
 # Now let's build the model, the reference model, and the tokenizer.
 time.sleep(int(os.environ["LOCAL_RANK"]))
 tokenizer = AutoTokenizer.from_pretrained(config.model_name, trust_remote_code=True)
-model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True, remote_ip='10.212.207.33:8000', triton_model_local="REL_large_onnx")
+model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True, remote_ip='10.212.207.33:8000', triton_model_local="REL_model_onnx")
 # ref_model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True)
 model.set_tokenizer(tokenizer)
 # ref_model.set_tokenizer(tokenizer)
@@ -272,25 +272,25 @@ for cur_big_epoch in range(10):
         inputs.append(httpclient.InferInput('attention_mask', list(RM_batch[1].shape), 'INT64'))
         inputs[0].set_data_from_numpy(RM_batch[0])
         inputs[1].set_data_from_numpy(RM_batch[1])
-        output = httpclient.InferRequestedOutput('output')
-        # try:
-        results = triton_client.infer(
-            "RM_large_onnx",
-            inputs,
-            model_version='1',
-            outputs=[output],
-            request_id='1',
-            timeout=300 * 1000
-        )
-        results = results.as_numpy('output')
+        # output = httpclient.InferRequestedOutput('output')
+        # # try:
+        # results = triton_client.infer(
+        #     "RM_large_onnx",
+        #     inputs,
+        #     model_version='1',
+        #     outputs=[output],
+        #     request_id='1',
+        #     timeout=300 * 1000
+        # )
+        # results = results.as_numpy('output')
         rewards = []
         for rsp in batch["response"]:
-            tmp_score = 3. * (rsp.find(',') - 40)
-            rewards.append(torch.tensor(tmp_score))
-            # if len(rsp) < 100:
-            #     rewards.append(torch.tensor(128))
-            # else:
-            #     rewards.append(torch.tensor(20.))
+            # tmp_score = 3. * (rsp.find(',') - 40)
+            # rewards.append(torch.tensor(tmp_score))
+            if len(rsp) < 100:
+                rewards.append(torch.tensor(-5.))
+            else:
+                rewards.append(torch.tensor(5.))
         # rewards = [torch.tensor(results[i][0]) for i in range(len(results))]
         # except:
         #     rewards = [torch.tensor(0.)]*config.batch_size
