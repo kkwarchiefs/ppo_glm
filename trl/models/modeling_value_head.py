@@ -58,8 +58,8 @@ class ValueHead(nn.Module):
 
         # For now force upcast in fp32 if needed. Let's keep the
         # output in fp32 for numerical stability.
-        if output.dtype != self.hidden_states.weight.dtype:
-            output = output.to(self.hidden_states.weight.dtype)
+        if output.dtype != hidden_states.weight.dtype:
+            output = output.to(hidden_states.weight.dtype)
 
         output = self.summary(output)
         return output
