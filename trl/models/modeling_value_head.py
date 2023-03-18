@@ -23,7 +23,7 @@ def make_head(n_embd: int, out: int) -> nn.Sequential:
     """Returns a generic sequential MLP head."""
     return nn.Sequential(
         nn.Linear(n_embd, n_embd * 2),
-        nn.ReLU(),
+        nn.Tanh(),
         nn.Linear(n_embd * 2, out),
     )
 
@@ -58,8 +58,8 @@ class ValueHead(nn.Module):
 
         # For now force upcast in fp32 if needed. Let's keep the
         # output in fp32 for numerical stability.
-        if output.dtype != self.summary.weight.dtype:
-            output = output.to(self.summary.weight.dtype)
+        if output.dtype != self.hidden_states.weight.dtype:
+            output = output.to(self.hidden_states.weight.dtype)
 
         output = self.summary(output)
         return output
