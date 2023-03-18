@@ -48,8 +48,8 @@ class ValueHead(nn.Module):
         else:
             hidden_size = config.hidden_size
 
-        # self.summary = nn.Linear(hidden_size, 1)
-        self.summary = make_head(hidden_size, 1)
+        self.summary = nn.Linear(hidden_size, 1)
+        # self.summary = make_head(hidden_size, 1)
 
         self.flatten = nn.Flatten()
 
