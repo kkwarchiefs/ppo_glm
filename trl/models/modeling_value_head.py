@@ -178,7 +178,7 @@ class AutoModelForCausalLMWithValueHead(PreTrainedModelWrapper):
         last_hidden_state = base_model_output.hidden_states[-1]
         lm_logits = base_model_output.logits
         loss = base_model_output.loss
-
+        last_hidden_state.detach_()
         value = self.v_head(last_hidden_state).squeeze(-1)
 
         # force upcast in fp32 if logits are in half-precision
