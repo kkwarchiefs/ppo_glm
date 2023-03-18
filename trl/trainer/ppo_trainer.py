@@ -742,7 +742,7 @@ class PPOTrainer(BaseTrainer):
             # kl_clone = kl.clone().to(kl.device)
             # kl_clone[kl > 0] = 0
             # kl[kl < 0] = 0
-            kl = torch.abs(kl)
+            # kl = torch.abs(kl)
             # print(kl, kl.shape)
             # if kl.sum() < 0:
             #     kl = torch.zeros_like(kl, dtype=torch.float32).to(kl.device)
