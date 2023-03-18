@@ -242,7 +242,7 @@ for cur_big_epoch in range(10):
         for temp_logit in response_tensor_temp:
             cur_response_tensor = []
             for cur_id in temp_logit:
-                if int(cur_id) >= 50007:
+                if int(cur_id) >= 50009:
                     continue
                 else:
                     cur_response_tensor.append(cur_id)
