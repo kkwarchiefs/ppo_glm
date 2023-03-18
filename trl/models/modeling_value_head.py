@@ -19,6 +19,15 @@ from .modeling_base import PreTrainedModelWrapper
 import tritonclient.http as httpclient
 
 
+def make_head(n_embd: int, out: int) -> nn.Sequential:
+    """Returns a generic sequential MLP head."""
+    return nn.Sequential(
+        nn.Linear(n_embd, n_embd * 2),
+        nn.ReLU(),
+        nn.Linear(n_embd * 2, out),
+    )
+
+
 class ValueHead(nn.Module):
     r"""
     The ValueHead class implements a head for GPT2 that returns a scalar for each output token.
@@ -39,7 +48,8 @@ class ValueHead(nn.Module):
         else:
             hidden_size = config.hidden_size
 
-        self.summary = nn.Linear(hidden_size, 1)
+        # self.summary = nn.Linear(hidden_size, 1)
+        self.summary = make_head(hidden_size, 1)
 
         self.flatten = nn.Flatten()
 
