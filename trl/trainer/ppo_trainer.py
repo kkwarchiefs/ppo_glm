@@ -592,7 +592,7 @@ class PPOTrainer(BaseTrainer):
 
             input_data["decoder_input_ids"] = decoder_inputs["input_ids"]
             input_data["decoder_attention_mask"] = decoder_inputs["attention_mask"]
-            if str(decoder_inputs.device) == "cuda:0":
+            if str(input_data["decoder_input_ids"].device) == "cuda:0":
                 print("decoder_input", input_data["decoder_input_ids"][0], input_data["decoder_attention_mask"][0])
             input_data.pop("labels", None)  # we don't want to compute LM losses
 
@@ -832,12 +832,12 @@ class PPOTrainer(BaseTrainer):
         return_mean, return_var = masked_mean(returns, mask), masked_var(returns, mask)
         value_mean, value_var = masked_mean(values, mask), masked_var(values, mask)
 
-        # if str(value_mean.device) == "cuda:0":
-        #     print("pg_loss: ", pg_loss,  'pg_losses:',  masked_mean(pg_losses, mask), "pg_losses2:", masked_mean(pg_losses2, mask))
-        #     print("advantages:", masked_mean(advantages, mask), advantages)
-        #     print("values:", masked_mean(values, mask), values)
-        #     print("rewards:", masked_mean(rewards, mask),  rewards)
-        #     print("ratio:", masked_mean(ratio, mask), ratio)
+        if str(value_mean.device) == "cuda:0":
+            print("pg_loss: ", pg_loss,  'pg_losses:',  masked_mean(pg_losses, mask), "pg_losses2:", masked_mean(pg_losses2, mask))
+            print("advantages:", masked_mean(advantages, mask), advantages[0])
+            print("values:", masked_mean(values, mask), values[0])
+            print("rewards:", masked_mean(rewards, mask),  rewards[0])
+            print("ratio:", masked_mean(ratio, mask), ratio[0])
 
         stats = dict(
             loss=dict(policy=pg_loss, value=vf_loss, total=loss),
