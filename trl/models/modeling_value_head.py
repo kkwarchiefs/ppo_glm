@@ -368,7 +368,7 @@ class AutoModelForSeq2SeqLMWithValueHead(PreTrainedModelWrapper):
         #last_hidden_state = base_model_output.mems[-1]
         #print(last_hidden_state.size())
         lm_logits = base_model_output.logits[:,input_ids.size()[1]-1:-1,:]
-        last_hidden_state.detach_()
+        last_hidden_state = last_hidden_state.detach()
         value = self.v_head(last_hidden_state).squeeze(-1)
 
         # force upcast in fp32 if logits are in half-precision
