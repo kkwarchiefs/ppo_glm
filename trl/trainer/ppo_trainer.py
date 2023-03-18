@@ -592,7 +592,8 @@ class PPOTrainer(BaseTrainer):
 
             input_data["decoder_input_ids"] = decoder_inputs["input_ids"]
             input_data["decoder_attention_mask"] = decoder_inputs["attention_mask"]
-            print("decoder_input", input_data["decoder_input_ids"], input_data["decoder_attention_mask"])
+            if str(decoder_inputs.device) == "cuda:0":
+                print("decoder_input", input_data["decoder_input_ids"][0], input_data["decoder_attention_mask"][0])
             input_data.pop("labels", None)  # we don't want to compute LM losses
 
         else:
