@@ -82,7 +82,7 @@ def GetRmBatchNumpy(prompt_list, response_list, RM_tokenizer):
     token_type_ids_list = []
     prompt_res = []
     for prompt, response in zip(prompt_list, response_list):
-        prompt = prompt.replace("<|startofpiece|>", "").replace("[回答]", "").replace("[CLS]", "").replace("\n", "").replace("<n>", "").replace("<|endoftext|>", "").replace("[gMASK]", "")
+        prompt = prompt.replace("<|startofpiece|>", "").replace("[回答]", "").replace("[CLS]", "").replace("<n>", "\n").replace("<|endoftext|>", "").replace("[gMASK]", "")
         response = response.replace("<|startofpiece|>", "").replace("<|endofpiece|>", "").replace("<|endoftext|>", "").replace(" ","")
         new_prompt = prompt + "[UNUSED1]" + response
         prompt_res.append(new_prompt[:500])
@@ -100,7 +100,7 @@ class GLMPPOTrainer(PPOTrainer):
     def generate(self, inputs, gen_len):
         #response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_length=512, eos_token_id=50007, num_beams=1, no_repeat_ngram_size=7, repetition_penalty=1.1, min_length=3)
         #response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_new_tokens=gen_len, eos_token_id=50007, num_beams=1, no_repeat_ngram_size=7, repetition_penalty=1.1, min_length=3)
-        response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_new_tokens=256, eos_token_id=50007, top_k=0, top_p=1, do_sample=True, temperature=0.7)
+        response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_new_tokens=gen_len, eos_token_id=50007, top_k=0, top_p=1, do_sample=True, temperature=0.7)
         return response
 
 
@@ -120,7 +120,7 @@ config = PPOConfig(
     model_name="/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/glm_0.5",
     learning_rate=5e-6,
     batch_size=8,
-    ppo_epochs=3,
+    ppo_epochs=2,
     log_with="wandb",
     init_kl_coef=0.3,
     remove_unused_columns=False,
@@ -142,15 +142,18 @@ class PPOIdxDataset(Dataset):
         self.f = open("/search/ai/kaitongyang/ppo_glm/data/prompt.txt")
         with open("/search/ai/kaitongyang/ppo_glm/data/dataset_tmp.id", 'rb') as fp:
             self.offsets = pickle.load(fp)
+        self.output_length_sampler = LengthSampler(10, 15)
+
     def __len__(self):
         return len(self.offsets)
     def __getitem__(self, index):
         self.f.seek(self.offsets[index], 0)
         cur_data = self.f.readline()
-        inputs = self.tokenizer(cur_data + "[回答][gMASK]", return_tensors="pt")
+        query_len = self.output_length_sampler()
+        inputs = self.tokenizer("改写这个问题“"+cur_data[:query_len] + "”[回答][gMASK]", return_tensors="pt")
         for key in inputs:
             inputs[key] = inputs[key][:,:-1]
-        inputs = tokenizer.build_inputs_for_generation(inputs, max_gen_length=300)
+        inputs = tokenizer.build_inputs_for_generation(inputs, max_gen_length=64)
         return inputs
        
 
@@ -272,26 +275,26 @@ for cur_big_epoch in range(10):
         inputs.append(httpclient.InferInput('attention_mask', list(RM_batch[1].shape), 'INT64'))
         inputs[0].set_data_from_numpy(RM_batch[0])
         inputs[1].set_data_from_numpy(RM_batch[1])
-        # output = httpclient.InferRequestedOutput('output')
-        # # try:
-        # results = triton_client.infer(
-        #     "RM_large_onnx",
-        #     inputs,
-        #     model_version='1',
-        #     outputs=[output],
-        #     request_id='1',
-        #     timeout=300 * 1000
-        # )
-        # results = results.as_numpy('output')
-        rewards = []
-        for rsp in batch["response"]:
-            tmp_score = 1.5*(rsp.count('<n>') - 5)
-            rewards.append(torch.tensor(tmp_score))
+        output = httpclient.InferRequestedOutput('output')
+        # try:
+        results = triton_client.infer(
+            "RM_10b_onnx",
+            inputs,
+            model_version='1',
+            outputs=[output],
+            request_id='1',
+            timeout=300 * 1000
+        )
+        results = results.as_numpy('output')
+        # rewards = []
+        # for rsp in batch["response"]:
+        #     tmp_score = 1.5*(rsp.count('<n>') - 5)
+        #     rewards.append(torch.tensor(tmp_score))
             # if len(rsp) < 100:
             #     rewards.append(torch.tensor(-5.))
             # else:
             #     rewards.append(torch.tensor(5.))
-        # rewards = [torch.tensor(results[i][0]) for i in range(len(results))]
+        rewards = [torch.tensor(results[i][0]) for i in range(len(results))]
         # except:
         #     rewards = [torch.tensor(0.)]*config.batch_size
         #print(rewards)
