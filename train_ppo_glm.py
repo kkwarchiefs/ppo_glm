@@ -163,10 +163,10 @@ def collator(data):
 
 # set seed before initializing value head for deterministic eval
 # set_seed(0)
-# print("os LOCAL_RANK", os.environ["LOCAL_RANK"])
-# if int(os.environ["LOCAL_RANK"]) % 2 == 1:
-#     print("sleep some time" )
-#     time.sleep(80)
+print("os LOCAL_RANK", os.environ["LOCAL_RANK"])
+if int(os.environ["LOCAL_RANK"]) % 2 == 1:
+    print("sleep some time" )
+    time.sleep(80)
 
 # Now let's build the model, the reference model, and the tokenizer.
 time.sleep(int(os.environ["LOCAL_RANK"]))
@@ -294,7 +294,7 @@ for cur_big_epoch in range(10):
             #     rewards.append(torch.tensor(-5.))
             # else:
             #     rewards.append(torch.tensor(5.))
-        rewards = [torch.tensor(results[i][0]) for i in range(len(results))]
+        rewards = [torch.tensor(results[i][0]-0.5) for i in range(len(results))]
         # except:
         #     rewards = [torch.tensor(0.)]*config.batch_size
         #print(rewards)
@@ -308,7 +308,7 @@ for cur_big_epoch in range(10):
             print("ppo trainer time : " + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         ppo_trainer.log_stats(stats, batch, rewards)
 
-        if (epoch+1) %50 == 0 and str(ppo_trainer.accelerator.device) == "cuda:0":
+        if (epoch+1) % 50 == 0 and str(ppo_trainer.accelerator.device) == "cuda:0":
             reward_path = "/search/ai/jamsluo/GLM_RLHF/ppo_glm/RLHF_MODEL_new_rm_glm_fb16"
             root_path = os.path.join(reward_path, str(cur_big_epoch) + "_" + str(epoch))
             if os.path.exists(root_path):
