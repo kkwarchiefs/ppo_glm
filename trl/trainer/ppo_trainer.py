@@ -446,7 +446,7 @@ class PPOTrainer(BaseTrainer):
         with torch.no_grad():
             all_logprobs, _, values, masks = self.batched_forward_pass(self.model, queries, responses, model_inputs)
             ref_logprobs, _, _, _ = self.batched_forward_pass(self.model, queries, responses, model_inputs, is_ref=True)
-            if str(all_logprobs.deivce) == "cuda:0":
+            if str(self.accelerator.device) == "cuda:0":
                 print("all_logprobs", all_logprobs[:, 0], ref_logprobs[:, 0], (all_logprobs[:, 0] - ref_logprobs[:, 0]).mean())
         timing["time/ppo/forward_pass"] = time.time() - t
         rewards, non_score_reward = self.compute_rewards(scores, all_logprobs, ref_logprobs, masks)
