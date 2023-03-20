@@ -86,11 +86,11 @@ def pad_to_size(tensor, size, dim=1, padding=50256):
         return torch.nn.functional.pad(tensor, (0, size - t_size), "constant", padding)
 
 
-def logprobs_from_logits(logits, labels):
+def logprobs_from_logits(logits, labels, temperature=0.7):
     """
     See: https://github.com/pytorch/pytorch/issues/563#issuecomment-330103591
     """
-    logp = torch.nn.functional.log_softmax(logits, dim=2)
+    logp = torch.nn.functional.log_softmax(logits/temperature, dim=2)
     logpy = torch.gather(logp, 2, labels.unsqueeze(2)).squeeze(-1)
     return logpy
 
