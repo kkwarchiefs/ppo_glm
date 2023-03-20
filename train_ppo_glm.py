@@ -124,7 +124,7 @@ config = PPOConfig(
     log_with="wandb",
     init_kl_coef=0.3,
     remove_unused_columns=False,
-    mini_batch_size=16
+    mini_batch_size=8
 )
 #print(dir(config))
 print(config.batch_size)
