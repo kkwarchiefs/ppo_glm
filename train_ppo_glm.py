@@ -142,15 +142,16 @@ class PPOIdxDataset(Dataset):
         self.f = open("/search/ai/kaitongyang/ppo_glm/data/prompt.txt")
         with open("/search/ai/kaitongyang/ppo_glm/data/dataset_tmp.id", 'rb') as fp:
             self.offsets = pickle.load(fp)
-        self.output_length_sampler = LengthSampler(10, 15)
+        # self.output_length_sampler = LengthSampler(10, 15)
 
     def __len__(self):
         return len(self.offsets)
     def __getitem__(self, index):
         self.f.seek(self.offsets[index], 0)
         cur_data = self.f.readline()
-        query_len = self.output_length_sampler()
-        inputs = self.tokenizer("改写这个问题“"+cur_data[:query_len] + "”[回答][gMASK]", return_tensors="pt")
+        if len(cur_data) > 50:
+            self.__getitem__(random.randint(0, len(self.offsets)))
+        inputs = self.tokenizer(cur_data + "[回答][gMASK]", return_tensors="pt")
         for key in inputs:
             inputs[key] = inputs[key][:,:-1]
         inputs = tokenizer.build_inputs_for_generation(inputs, max_gen_length=64)

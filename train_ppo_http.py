@@ -138,7 +138,7 @@ def build_dataset(data_path, tokenizer):
     for data in datas[:2000]:
         data = json.loads(data)
         prompt = data["prompt"]
-        inputs = tokenizer(prompt+" [回答]"+"[gMASK]", return_tensors="pt")
+        inputs = tokenizer(prompt+"[回答]"+"[gMASK]", return_tensors="pt")
         for key in inputs:
             inputs[key] = inputs[key][:,:-1]
         inputs = tokenizer.build_inputs_for_generation(inputs, max_gen_length=512)
