@@ -149,8 +149,8 @@ class PPOIdxDataset(Dataset):
     def __getitem__(self, index):
         self.f.seek(self.offsets[index], 0)
         cur_data = self.f.readline()
-        if len(cur_data) > 50:
-            self.__getitem__(random.randint(0, len(self.offsets)))
+        # if len(cur_data) > 50:
+        #     self.__getitem__(random.randint(0, len(self.offsets)))
         inputs = self.tokenizer(cur_data + "[回答][gMASK]", return_tensors="pt")
         for key in inputs:
             inputs[key] = inputs[key][:,:-1]
