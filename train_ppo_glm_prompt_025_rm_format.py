@@ -265,7 +265,7 @@ for cur_big_epoch in range(10):
         output = httpclient.InferRequestedOutput('output')
         # try:
         results = triton_client.infer(
-            "rm_classify_onnx",
+            "RM_classify_onnx",
             inputs,
             model_version='1',
             outputs=[output],
