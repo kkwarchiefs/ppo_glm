@@ -105,7 +105,7 @@ class GLMPPOTrainer(PPOTrainer):
 
 
 config = PPOConfig(
-    model_name="/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/glm_0.5",
+    model_name="/search/ai/jamsluo/GLM_RLHF/sft_0.6",
     learning_rate=5e-6,
     batch_size=8,
     ppo_epochs=3,
@@ -158,7 +158,7 @@ if int(os.environ["LOCAL_RANK"]) % 2 == 1:
 # Now let's build the model, the reference model, and the tokenizer.
 time.sleep(int(os.environ["LOCAL_RANK"]))
 tokenizer = AutoTokenizer.from_pretrained(config.model_name, trust_remote_code=True)
-model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True, remote_ip='10.212.207.33:8000', triton_model_local="REL_model_onnx")
+model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True, remote_ip=remote_ip, triton_model_local="REL_sft_06")
 # ref_model = AutoModelForSeq2SeqLMWithValueHead.from_pretrained(config.model_name, trust_remote_code=True)
 model.set_tokenizer(tokenizer)
 # ref_model.set_tokenizer(tokenizer)
@@ -189,7 +189,7 @@ RM_model.to(no_update_device)
 senti_tokenizer = AutoTokenizer.from_pretrained('/search/ai/kaitongyang/RLHF_DEBUG/RM/reward_model_glm_10b_bak/final', trust_remote_code=True)
 # senti_model = AutoModelForSequenceClassification.from_pretrained('uer/roberta-base-finetuned-jd-binary-chinese')
 # sentiment_pipe = pipeline('sentiment-analysis', model=senti_model, tokenizer=senti_tokenizer, device=no_update_device)
-triton_client = httpclient.InferenceServerClient(url='10.212.207.33:12356', connection_timeout=300, network_timeout=300)
+triton_client = httpclient.InferenceServerClient(url=remote_ip, connection_timeout=300, network_timeout=300)
 
 # We then define the arguments to pass to the `generate` function. These arguments
 # are passed to the `generate` function of the PPOTrainer, which is a wrapper around
@@ -297,7 +297,7 @@ for cur_big_epoch in range(10):
         ppo_trainer.log_stats(stats, batch, rewards)
 
         if (epoch+1) % 50 == 0 and str(ppo_trainer.accelerator.device) == "cuda:0":
-            reward_path = "/search/ai/jamsluo/GLM_RLHF/ppo_glm/RLHF_MODEL_rm_large_new"
+            reward_path = "/search/ai/jamsluo/GLM_RLHF/ppo_glm/RLHF_sft06_rm_large_new"
             root_path = os.path.join(reward_path, str(cur_big_epoch) + "_" + str(epoch))
             if os.path.exists(root_path):
                 pass

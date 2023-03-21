@@ -7,13 +7,14 @@ import torch
 from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM
 # from trl import AutoModelForSeq2SeqLMWithValueHead
 
-model_name = "REL_model_onnx"
+model_name = "REL_sft_06"
 device = torch.device('cuda:7')
 
 
 model_path = "/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/cur_model/30630"
 model_path = "/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/small_glm"
 model_path = "/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/glm_0.5"
+model_path = "/search/ai/jamsluo/GLM_RLHF/sft_0.6/"
 query_text = '什么人不能喝三七粉' + "[gMASK]"
 response_text = '服用三七粉期间,孕妇和儿童不宜使用。 三七粉是处方药,不是药品。 过量服用会引起中毒。'
 tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)

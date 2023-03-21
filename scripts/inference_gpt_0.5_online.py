@@ -55,7 +55,7 @@ while True:
         inputs_ori[key] = inputs_ori[key][:, :-1]
     inputs = tokenizer.build_inputs_for_generation(inputs_ori, max_gen_length=512)
     # inputs = inputs.to(device)
-    outputs = model.generate(**inputs, max_new_tokens=256, eos_token_id=50007, top_k=20, top_p=0.6,repetition_penalty=1.3, do_sample=False)
+    outputs = model.generate(**inputs, max_new_tokens=512, eos_token_id=50007, top_k=20, top_p=0.6, repetition_penalty=1.3, do_sample=False)
     # response_text = [tokenizer.decode(logits) for logits in outputs.tolist()]
     # print(response_text)
     response_text = [tokenizer.decode(logits) for logits in outputs[:, inputs["input_ids"].size()[1]:].tolist()]
