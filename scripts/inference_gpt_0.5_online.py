@@ -9,7 +9,7 @@ path = '/search/ai/kaitongyang/ppo_glm_debug/RLHF_MODEL_big_glm_fb16_beam_e6/0_3
 path = "/search/ai/jamsluo/GLM_RLHF/ppo_glm/RLHF_MODEL_rm_large_glm_fb16/1_299/"
 # path = "/search/ai/jamsluo/GLM_RLHF/ppo_glm/RLHF_MODEL_sent_glm_fb16/1_149"
 # path = "/search/ai/jamsluo/GLM_RLHF/ppo_glm/RLHF_MODEL_new_rm_glm_fb16/1_49/"
-device = "cuda:5"
+device = "cuda:7"
 suffix = "[回答][gMASK]"
 set_seed(0)
 tokenizer = AutoTokenizer.from_pretrained(path, trust_remote_code=True)
