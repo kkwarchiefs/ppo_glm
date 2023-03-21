@@ -83,9 +83,9 @@ def GetRmBatchNumpy(prompt_list, response_list, RM_tokenizer):
     prompt_res = []
     for prompt, response in zip(prompt_list, response_list):
         prompt = prompt.replace("<|startofpiece|>", "").replace("[回答]", "").replace("[CLS]", "").replace("<n>", "\n").replace("<|endoftext|>", "").replace("[gMASK]", "")
-        response = response.replace("<|startofpiece|>", "").replace("<|endofpiece|>", "").replace("<|endoftext|>", "").replace(" ","")
-        new_prompt = prompt + "[UNUSED1]" + response
-        prompt_res.append(new_prompt[:50])
+        response = response.replace("<|startofpiece|>", "").replace("<|endofpiece|>", "").replace("<|endoftext|>", "").replace(" ","").replace("[CLS]", "").replace("[gMASK]", "")
+        new_prompt = response
+        prompt_res.append(new_prompt)
         # RM_input = RM_tokenizer((prompt + "[UNUSED1]" + response)[:300], max_length=512, padding=True)
         # input_ids_list.append(RM_input["input_ids"])
         # attention_mask_list.append(RM_input["attention_mask"])
@@ -100,7 +100,7 @@ class GLMPPOTrainer(PPOTrainer):
     def generate(self, inputs, gen_len):
         #response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_length=512, eos_token_id=50007, num_beams=1, no_repeat_ngram_size=7, repetition_penalty=1.1, min_length=3)
         #response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_new_tokens=gen_len, eos_token_id=50007, num_beams=1, no_repeat_ngram_size=7, repetition_penalty=1.1, min_length=3)
-        response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_new_tokens=gen_len, eos_token_id=50007, top_k=0, top_p=1, do_sample=True, temperature=0.7)
+        response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_new_tokens=512, eos_token_id=50007, top_k=0, top_p=1, do_sample=True, temperature=0.7)
         return response
 
 
@@ -110,7 +110,7 @@ config = PPOConfig(
     batch_size=8,
     ppo_epochs=3,
     log_with="wandb",
-    init_kl_coef=0.1,
+    init_kl_coef=0.05,
     remove_unused_columns=False,
     mini_batch_size=8
 )
@@ -127,8 +127,8 @@ print(config.ppo_epochs)
 class PPOIdxDataset(Dataset):
     def __init__(self, tokenizer):
         self.tokenizer = tokenizer
-        self.f = open("/search/ai/kaitongyang/ppo_glm_debug/data/same_long_prompt/prompt.txt")
-        with open("/search/ai/kaitongyang/ppo_glm_debug/data/same_long_prompt/dataset_tmp.id", 'rb') as fp:
+        self.f = open("/search/ai/kaitongyang/ppo_glm_debug/data/same_long_prompt_25_27/prompt.txt")
+        with open("/search/ai/kaitongyang/ppo_glm_debug/data/same_long_prompt_25_27/dataset_tmp.id", 'rb') as fp:
             self.offsets = pickle.load(fp)
     def __len__(self):
         return len(self.offsets)
@@ -265,7 +265,7 @@ for cur_big_epoch in range(10):
         output = httpclient.InferRequestedOutput('output')
         # try:
         results = triton_client.infer(
-            "RM_short_chat",
+            "RM_classify_onnx",
             inputs,
             model_version='1',
             outputs=[output],
@@ -281,7 +281,7 @@ for cur_big_epoch in range(10):
             #     rewards.append(torch.tensor(-5.))
             # else:
             #     rewards.append(torch.tensor(5.))
-        rewards = [torch.tensor(results[i][0]) for i in range(len(results))]
+        rewards = [torch.tensor(results[i][1]) for i in range(len(results))]
         # except:
         #     rewards = [torch.tensor(0.)]*config.batch_size
         #print(rewards)
@@ -296,7 +296,7 @@ for cur_big_epoch in range(10):
         ppo_trainer.log_stats(stats, batch, rewards)
 
         if (epoch+1) % 50 == 0 and str(ppo_trainer.accelerator.device) == "cuda:0":
-            reward_path = "/search/ai/jamsluo/GLM_RLHF/ppo_glm/RLHF_MODEL_rm_short_new"
+            reward_path = "/search/ai/jamsluo/GLM_RLHF/ppo_glm/RLHF_sft06_rm_large_new"
             root_path = os.path.join(reward_path, str(cur_big_epoch) + "_" + str(epoch))
             if os.path.exists(root_path):
                 pass
