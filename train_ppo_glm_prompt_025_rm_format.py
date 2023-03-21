@@ -222,7 +222,7 @@ for cur_big_epoch in range(10):
         query_tensor = tokenizer.build_inputs_for_generation(query_tensor, max_gen_length=512)
         query_tensor.to(device)
         if str(ppo_trainer.accelerator.device) == "cuda:0":
-            print("epoch:"+str(epoch) + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            print(str(cur_big_epoch) + "epoch:"+str(epoch) + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         gen_len = output_length_sampler()
         response = ppo_trainer.generate(query_tensor, gen_len)[:, query_tensor["input_ids"].size()[1]:]
         padding_mask = response!=50007
