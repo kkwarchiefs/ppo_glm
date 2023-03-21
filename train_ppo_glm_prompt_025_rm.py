@@ -22,7 +22,7 @@ import datetime
 tqdm.pandas()
 
 import pickle
-from transformers import pipeline, AutoTokenizer
+from transformers import pipeline, AutoTokenizer, set_seed
 from datasets import load_dataset
 from datasets import Dataset
 from trl import PPOTrainer, PPOConfig, AutoModelForCausalLMWithValueHead, AutoModelForSeq2SeqLMWithValueHead
@@ -104,18 +104,6 @@ class GLMPPOTrainer(PPOTrainer):
         return response
 
 
-def set_seed(seed: int):
-    """
-    Helper function for reproducible behavior to set the seed in `random`, `numpy`, and `torch`.
-    Args:
-        seed (`int`): The seed to set.
-    """
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-
-
 config = PPOConfig(
     model_name="/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/glm_0.5",
     learning_rate=5e-6,
@@ -161,7 +149,7 @@ def collator(data):
 
 
 # set seed before initializing value head for deterministic eval
-# set_seed(0)
+set_seed(0)
 print("os LOCAL_RANK", os.environ["LOCAL_RANK"])
 if int(os.environ["LOCAL_RANK"]) % 2 == 1:
     print("sleep some time" )

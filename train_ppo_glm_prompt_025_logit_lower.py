@@ -158,7 +158,7 @@ def collator(data):
 
 
 # set seed before initializing value head for deterministic eval
-# set_seed(0)
+set_seed(0)
 print("os LOCAL_RANK", os.environ["LOCAL_RANK"])
 if int(os.environ["LOCAL_RANK"]) % 2 == 1:
     print("sleep some time" )
