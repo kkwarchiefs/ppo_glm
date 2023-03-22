@@ -20,7 +20,7 @@
     "enabled": true
   },
   "optimizer": {
-    "type": "FusedAdam",
+    "type": "Adam",
     "params": {
       "lr": 2e-6,
       "betas": [
