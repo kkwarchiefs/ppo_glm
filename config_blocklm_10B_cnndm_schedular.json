@@ -1,10 +1,10 @@
 {
-  "train_micro_batch_size_per_gpu": 8,
+  "train_micro_batch_size_per_gpu": "auto",
   "gradient_accumulation_steps": 1,
   "steps_per_print": 50,
   "gradient_clipping": 1.0,
   "zero_optimization": {
-    "stage": 2,
+    "stage": 1,
     "contiguous_gradients": false,
     "overlap_comm": true,
     "reduce_scatter": true,
@@ -14,16 +14,15 @@
   },
   "zero_allow_untested_optimizer": false,
   "fp16": {
-    "enabled": true,
-    "loss_scale": 0,
-    "loss_scale_window": 1000,
-    "hysteresis": 2,
-    "min_loss_scale": 0.25
+    "enabled": false
+  },
+  "bf16": {
+    "enabled": true
   },
   "optimizer": {
-    "type": "Adam",
+    "type": "FusedAdam",
     "params": {
-      "lr": 1e-6,
+      "lr": 2e-6,
       "betas": [
         0.9,
         0.95
@@ -31,6 +30,14 @@
       "eps": 1e-8,
       "weight_decay": 1e-2
     }
+  },
+  "scheduler": {
+      "type": "WarmupDecayLR",
+      "params": {
+          "warmup_min_lr": 0,
+          "warmup_max_lr": 2e-6,
+          "warmup_num_steps": 300
+      }
   },
   "activation_checkpointing": {
     "partition_activations": false,
