@@ -4,9 +4,10 @@ import torch
 
 path = "/search/ai/kaitongyang/online/model/GLM-10B-chinese-customization_03-07-21-23"
 path = "/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/glm_0.5"
+path = "/search/ai/jamsluo/GLM_RLHF/sft_0.6"
 # path = '/search/ai/pretrain_models/glm-large-chinese/'
 # path = '/search/ai/kaitongyang/ppo_glm_debug/RLHF_MODEL_big_glm_fb16_beam_e6/0_340'
-device = "cuda:6"
+device = "cuda:4"
 suffix = "[回答][gMASK]"
 set_seed(0)
 tokenizer = AutoTokenizer.from_pretrained(path, trust_remote_code=True)

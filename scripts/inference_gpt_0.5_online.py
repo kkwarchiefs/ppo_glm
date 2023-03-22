@@ -7,9 +7,10 @@ path = "/search/ai/kaitongyang/online/model/GLM-10B-chinese-customization_03-07-
 # path = '/search/ai/pretrain_models/glm-large-chinese/'
 path = '/search/ai/kaitongyang/ppo_glm_debug/RLHF_MODEL_big_glm_fb16_beam_e6/0_340'
 path = "/search/ai/jamsluo/GLM_RLHF/ppo_glm/RLHF_MODEL_rm_large_new/0_99/"
+path = "/search/ai/jamsluo/GLM_RLHF/ppo_glm/RLHF_sft06_rm_large_new/1_249/"
 # path = "/search/ai/jamsluo/GLM_RLHF/ppo_glm/RLHF_MODEL_sent_glm_fb16/1_149"
 # path = "/search/ai/jamsluo/GLM_RLHF/ppo_glm/RLHF_MODEL_new_rm_glm_fb16/1_49/"
-device = "cuda:7"
+device = "cuda:5"
 suffix = "[回答][gMASK]"
 set_seed(0)
 tokenizer = AutoTokenizer.from_pretrained(path, trust_remote_code=True)
@@ -55,7 +56,7 @@ while True:
         inputs_ori[key] = inputs_ori[key][:, :-1]
     inputs = tokenizer.build_inputs_for_generation(inputs_ori, max_gen_length=512)
     # inputs = inputs.to(device)
-    outputs = model.generate(**inputs, max_new_tokens=512, eos_token_id=50007, top_k=20, top_p=0.6, repetition_penalty=1.3, do_sample=False)
+    outputs = model.generate(**inputs, max_new_tokens=512, eos_token_id=50007, top_k=20, top_p=0.6,repetition_penalty=1.3, do_sample=False)
     # response_text = [tokenizer.decode(logits) for logits in outputs.tolist()]
     # print(response_text)
     response_text = [tokenizer.decode(logits) for logits in outputs[:, inputs["input_ids"].size()[1]:].tolist()]
