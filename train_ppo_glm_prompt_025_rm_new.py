@@ -108,9 +108,9 @@ config = PPOConfig(
     model_name="/search/ai/jamsluo/GLM_RLHF/sft_0.6",
     learning_rate=5e-6,
     batch_size=8,
-    ppo_epochs=3,
+    ppo_epochs=4,
     log_with="wandb",
-    init_kl_coef=0.03,
+    init_kl_coef=0.1,
     remove_unused_columns=False,
     mini_batch_size=8
 )
