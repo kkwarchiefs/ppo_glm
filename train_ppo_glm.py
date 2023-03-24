@@ -151,7 +151,7 @@ class PPOIdxDataset(Dataset):
         cur_data = self.f.readline()
         # if len(cur_data) > 50:
         #     self.__getitem__(random.randint(0, len(self.offsets)))
-        inputs = self.tokenizer(cur_data + "[回答][gMASK]", return_tensors="pt")
+        inputs = self.tokenizer(cur_data + " [回答][gMASK]", return_tensors="pt")
         for key in inputs:
             inputs[key] = inputs[key][:,:-1]
         inputs = tokenizer.build_inputs_for_generation(inputs, max_gen_length=64)

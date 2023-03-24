@@ -10,7 +10,7 @@ path = "/search/ai/jamsluo/GLM_RLHF/ppo_glm/RLHF_MODEL_rm_large_glm_fb16/1_299/"
 path = "/search/ai/jamsluo/GLM_RLHF/ppo_glm/RLHF_MODEL_rm_large_new/0_149/"
 # path = "/search/ai/jamsluo/GLM_RLHF/ppo_glm/RLHF_MODEL_new_rm_glm_fb16/1_49/"
 device = "cuda:5"
-suffix = "[回答][gMASK]"
+suffix = " [回答][gMASK]"
 set_seed(0)
 tokenizer = AutoTokenizer.from_pretrained(path, trust_remote_code=True)
 model = AutoModelForSeq2SeqLM.from_pretrained(path, trust_remote_code=True)

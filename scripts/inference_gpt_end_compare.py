@@ -7,7 +7,7 @@ path = "/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/glm_0.5"
 # path = '/search/ai/pretrain_models/glm-large-chinese/'
 # path = '/search/ai/kaitongyang/ppo_glm_debug/RLHF_MODEL_big_glm_fb16_beam_e6/0_340'
 device = "cuda:6"
-suffix = "[回答][gMASK]"
+suffix = " [回答][gMASK]"
 
 tokenizer = AutoTokenizer.from_pretrained(path, trust_remote_code=True)
 model = AutoModelForSeq2SeqLM.from_pretrained(path, trust_remote_code=True)
