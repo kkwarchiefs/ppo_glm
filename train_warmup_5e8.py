@@ -233,7 +233,7 @@ for cur_big_epoch in range(10):
         for temp_logit in response_tensor_temp:
             cur_response_tensor = []
             for cur_id in temp_logit:
-                if int(cur_id) >= 50009:
+                if int(cur_id) >= 50010:
                     continue
                 else:
                     cur_response_tensor.append(cur_id)
@@ -298,7 +298,7 @@ for cur_big_epoch in range(10):
         ppo_trainer.log_stats(stats, batch, rewards)
 
         if epoch % 30 == 0 and str(ppo_trainer.accelerator.device) == "cuda:0":
-            reward_path = "/search/ai/kaitongyang/ppo_glm_online/ppo_glm/ppo_model/warmup_5e8_1e7"
+            reward_path = "/search/ai/kaitongyang/ppo_glm_online/ppo_glm/ppo_model/lr1e6_kl001"
             root_path = os.path.join(reward_path, str(cur_big_epoch) + "_" + str(epoch))
             if os.path.exists(root_path):
                 pass
