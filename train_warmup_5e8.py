@@ -128,8 +128,8 @@ print(config.ppo_epochs)
 class PPOIdxDataset(Dataset):
     def __init__(self, tokenizer):
         self.tokenizer = tokenizer
-        self.f = open("/search/ai/kaitongyang/ppo_glm_debug/data/little_same_long_prompt_add/prompt.txt")
-        with open("/search/ai/kaitongyang/ppo_glm_debug/data/little_same_long_prompt_add/dataset_tmp.id", 'rb') as fp:
+        self.f = open("/search/ai/kaitongyang/ppo_glm_debug/data/bad_case_prompt/sft_data/prompt.txt")
+        with open("/search/ai/kaitongyang/ppo_glm_debug/data/bad_case_prompt/sft_data/dataset_tmp.id", 'rb') as fp:
             self.offsets = pickle.load(fp)
     def __len__(self):
         return len(self.offsets)
