@@ -190,7 +190,7 @@ RM_model.to(no_update_device)
 senti_tokenizer = BertTokenizer.from_pretrained('/search/ai/pretrain_models/cpt-large/', trust_remote_code=True)
 # senti_model = AutoModelForSequenceClassification.from_pretrained('uer/roberta-base-finetuned-jd-binary-chinese')
 # sentiment_pipe = pipeline('sentiment-analysis', model=senti_model, tokenizer=senti_tokenizer, device=no_update_device)
-triton_client = httpclient.InferenceServerClient(url=remote_ip, connection_timeout=300, network_timeout=300)
+triton_client = httpclient.InferenceServerClient(url="10.212.207.33:12356", connection_timeout=300, network_timeout=300)
 
 # We then define the arguments to pass to the `generate` function. These arguments
 # are passed to the `generate` function of the PPOTrainer, which is a wrapper around
@@ -298,7 +298,7 @@ for cur_big_epoch in range(10):
         ppo_trainer.log_stats(stats, batch, rewards)
 
         if epoch % 30 == 0 and str(ppo_trainer.accelerator.device) == "cuda:0":
-            reward_path = "/search/ai/kaitongyang/ppo_glm_online/ppo_glm/ppo_model/lr1e6_kl001"
+            reward_path = "/search/ai/kaitongyang/ppo_glm_online/ppo_glm/ppo_model/lr1e6_kl001_newrm"
             root_path = os.path.join(reward_path, str(cur_big_epoch) + "_" + str(epoch))
             if os.path.exists(root_path):
                 pass
