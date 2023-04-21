@@ -98,8 +98,6 @@ def GetRmBatchNumpy(prompt_list, response_list, RM_tokenizer):
 
 class GLMPPOTrainer(PPOTrainer):
     def generate(self, inputs, gen_len):
-        #response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_length=512, eos_token_id=50007, num_beams=1, no_repeat_ngram_size=7, repetition_penalty=1.1, min_length=3)
-        #response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_new_tokens=gen_len, eos_token_id=50007, num_beams=1, no_repeat_ngram_size=7, repetition_penalty=1.1, min_length=3)
         response = self.accelerator.unwrap_model(self.model).generate(**inputs, max_new_tokens=gen_len, eos_token_id=50007, top_k=0, top_p=1, do_sample=True, temperature=0.7)
         return response
 
@@ -118,11 +116,11 @@ def set_seed(seed: int):
 
 config = PPOConfig(
     model_name="/search/ai/kaitongyang/RLHF_DEBUG/PPO_trl/glm_0.5",
-    learning_rate=5e-6,
+    learning_rate=1e-6,
     batch_size=16,
     ppo_epochs=2,
     log_with="wandb",
-    init_kl_coef=0.3,
+    init_kl_coef=0.05,
     remove_unused_columns=False,
     mini_batch_size=8
 )
